@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+{% block headscripts %}
+	<script>
+		$(document).ready(function() 
+		{
+			var MaxInputs       = 99; //maximum input boxes allowed
+			var InputsWrapper   = $("#InputsWrapper"); //Input boxes wrapper ID
+			var AddButton       = $("#AddMoreFileBox"); //Add button ID
+
+			var x = InputsWrapper.length; //initlal text box count
+			var FieldCount=1; //to keep track of text box added
+
+			$(AddButton).click(function (e)  //on add input button click
+			{
+				if(x <= MaxInputs) //max input box allowed
+				{
+					FieldCount++; //text box added increment
+					//add input box
+					$(InputsWrapper).append('<div><input type="text" name="comments[]" size="100" id="comment_'+ FieldCount +'" value=""/> <select name="commenttypes[]" id="type_'+FieldCount+'"><option value="1">good comment</option><option value="2">rude or offensive</option><option value="3">not constructive</option><option value="4">obsolete</option><option value="5">too chatty</option></select> <a href="#" class="removeclass">&times;</a> </div>');
+					x++; //text box increment
+				}
+				return false;
+			});
+
+			$("body").on("click",".removeclass", function(e)
+			{ //user click on remove text
+				if( x > 1 ) {
+					$(this).parent('div').remove(); //remove text box
+					x--; //decrement textbox
+				}
+				return false;
+			})
+		});	
+		
+		$(document).on('submit', '#new_comments', function()
+		{
+//			e.preventDefault();	//STOP default action
+			$.ajax(
+			{
+				url : $(this).attr("action"),
+				type: "POST",
+				data : $(this).serializeArray(),
+				success:function(data, textStatus, jqXHR) 
+				{
+					var x = $("#InputsWrapper").children("div").length;
+					$($('#InputsWrapper').children('div').get().reverse()).each(function () 
+					{
+						if (x > 1)
+						{
+							$(this).remove();
+							x--;
+						}
+						if (x == 1)
+						{
+							$("#comment_1").val("");
+							$("#type_1").val("1");
+						}
+					});
+				},
+				error: function(jqXHR, textStatus, errorThrown) 
+				{
+					alert("Error: " + errorThrown);
+				}
+			});
+			return false;
+		});
+	</script>
+{% endblock %}
+
+{% block commenttable %}
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="#" id="AddMoreFileBox" class="btn btn-info">Add Fields</a></span>
+		</div>
+		<div class="col-sm-12">
+			<form name="new_comments" id="new_comments" action="{{ url_for('add_comment_data') }}" method="POST">
+			<div id="InputsWrapper">
+				<div>
+					<input type="text" name="comments[]" size="100" id="comment_1" value=""/>
+					<select name="commenttypes[]" id="type_1"><option value="1">good comment</option><option value="2">rude or offensive</option><option value="3">not constructive</option><option value="4">obsolete</option><option value="5">too chatty</option></select>
+					<a href="#" class="removeclass">&times;</a>
+				</div>
+			</div>
+			<button class="btn btn-info" id="simple-post">Add Comments</button>
+			</form>
+        </div>
+		
+    </div>
+{% endblock %}

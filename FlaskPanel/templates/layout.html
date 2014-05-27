@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="//vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <link href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css" rel="stylesheet"/>
+    <link href="//cdn.datatables.net/plug-ins/28e7751dbec/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet"/>
+
+
+    <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//vitalets.github.com/x-editable/assets/x-editable/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/28e7751dbec/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+	<script src="http://jquery-datatables-column-filter.googlecode.com/svn/trunk/media/js/jquery.dataTables.columnFilter.js"></script>
+	<script type=text/javascript>
+		$(document).ready(function() {
+		  $.fn.editable.defaults.mode = 'inline';
+		  $('#comment_tbl').dataTable({
+			  "aaSorting": [[ 1, "desc" ]],
+			  "lengthMenu": [[50, 250, 500, 1000], [50, 250, 500, 1000]],
+			  "iDisplayLength": 250,
+			  "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+				$('#comment_tbl a.comment_type').editable({
+				  type: 'select',
+				  name: 'Comment Type',
+				  title: 'Comment Type',
+				  url: "{{ url_for('update_comment') }}",
+				  source: [
+					{value: 1, text: 'good comment'},
+					{value: 2, text: 'rude or offensive'},
+					{value: 3, text: 'not constructive'},
+					{value: 4, text: 'obsolete'},
+					{value: 5, text: 'too chatty'},
+					{value: 6, text: 'other...'}
+				  ],
+				  ajaxOptions: {
+					type: 'post'
+				  },
+				  onblur: 'submit',
+				  send: 'always'
+				});
+			  }
+			}).columnFilter({
+				sPlaceHolder: "head:after",
+				aoColumns: [ 
+					null,
+					null,		// Date filter?
+					null,
+					{ type: "select", values: [ 'good comment', 'rude or offensive', 'not constructive', 'obsolete', 'too chatty', 'other...']  },
+					{ type: "select", values: [ 'True', 'False'] },	
+				],
+			});
+
+		  $('#comment_tbl .editable').on('hidden', function(e, reason){
+				if(reason === 'save' || reason === 'nochange') {
+				  var $next = $(this).closest('tr').next().find('.editable');
+				  if($('#autoopen').is(':checked')) {
+					setTimeout(function() {
+						$next.editable('show');
+					}, 300);
+				  } else {
+					$next.focus();
+				  }
+				}
+			});
+		  });
+	</script>
+	{% block headscripts %}{% endblock %}
+  </head>
+  <body>
+      <div class="container">
+		<div class="header">
+			<h3 class="text-muted">Comments in the System</h3>
+			Training ManualAdd SystemAdded Disputed
+		</div>
+		<hr />
+		{% block commenttable %}{% endblock %}
+  </body>
+</html>

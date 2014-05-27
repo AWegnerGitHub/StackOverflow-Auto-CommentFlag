@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block commenttable %}
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="comment_tbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Post Date</th>
+                        <th>Text</th>
+                        <th>Comment Type</th>
+                        <th>Disputed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for c in comments %}
+                    <tr>
+                        <td><a href="{{ c.link }}">{{ c.id }}</a></td>
+                        <td>{{ c.creation_date }}</td>
+                        <td>{{ c.text }}</td>
+                        <td><a href="#" class="comment_type" data-pk="{{ c.id }}" data-type="select" data-value="{{ c.comment_type.id }}">{{ c.comment_type.name }}</a></td>
+                        <td>{{ c.disputed }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+            <label><input type="checkbox" id="autoopen" style="vertical-align: baseline" checked>&nbsp;Automatically open next entry</label>
+        </div>
+    </div>
+{% endblock %}
