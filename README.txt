@@ -15,3 +15,7 @@ Goals of the project:
 Higher level goals:
 
  - Attempt to use different algorithms to learn comment types
+ 
+How to run:
+
+ - The Flask Control panel can be run from Windows by executing the `run_flask.bat` file. If it is run within Linux, then the `PYTHONPATH` needs to be modified to include the root of this project and then you can execute `python FlaskPanel\app.py`. This modification is needed so that modules at a sibling level to `FlaskPanel` can be included.
