@@ -72,7 +72,7 @@
       <div class="container">
 		<div class="header">
 			<h3 class="text-muted">Comments in the System</h3>
-			Training ManualAdd SystemAdded Disputed
+			<a href="{{ url_for('training_data') }}">Training</a> | <a href="{{ url_for('manual_data') }}">Manually Added</a> | <a href="{{ url_for('automated_data') }}">System Added</a> | <a href="{{ url_for('disputed_data') }}">Disputed</a>
 		</div>
 		<hr />
 		{% block commenttable %}{% endblock %}

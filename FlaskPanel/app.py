@@ -8,9 +8,9 @@ app = Flask(__name__)
 app.config.from_pyfile('app.cfg')
 db = SQLAlchemy(app)
 
-post_type_dict {
-	"question": 1,
-	"answer": 2
+post_type_dict = {
+    "question": 1,
+    "answer": 2
 }
 
 @app.route('/')
@@ -23,8 +23,7 @@ def index():
 @app.route('/training_data')
 def training_data():
     return render_template('index.html',
-                            comments=db.session.query(Comment).order_by(Comment.creation_date.desc()).all())
-                            # THis is not the correct filter. It needs to be filter(is_training=True) when the is_training is added to schema
+                            comments=db.session.query(Comment).filter_by(is_training=True).order_by(Comment.creation_date.desc()).all())
                             
                             
 @app.route('/disputed_comments')
@@ -36,15 +35,13 @@ def disputed_data():
 @app.route('/automated_data')
 def automated_data():
     return render_template('index.html',
-                            comments=db.session.query(Comment).order_by(Comment.creation_date.desc()).all())
-                            # This is not correct. Needs to be filter(added_manually=False) when added_manually is added to schema
+                            comments=db.session.query(Comment).filter_by(added_manually=False, is_training=False).order_by(Comment.creation_date.desc()).all())
 
 
 @app.route('/manual_data')
 def manual_data():
     return render_template('index.html',
-                            comments=db.session.query(Comment).order_by(Comment.creation_date.desc()).all())
-                            # This is not correct. Needs to be filter(added_manually=True) when added_manually is added to schema
+                            comments=db.session.query(Comment).filter_by(added_manually=True, is_training=False).order_by(Comment.creation_date.desc()).all())
 
 
 @app.route('/add_comments')
@@ -66,44 +63,44 @@ def add_comment_data():
     # THIS IS WHERE WE PULL COMMENTS FROM API
     site = SEAPI("stackoverflow")
     comment_data = site.fetch('comments',ids=comments, filter='!1zSsiTKfrlw0eKYQiRXjG')
-	for c in comment_data:
-		link = "http://stackoverflow.com/posts/comments/%s" % (c['comment_id'])
-		text = BeautifulSoup(c['body']).get_text()
-		id = c['comment_id']
-		score = c['score']
-		user_id = c['owner']['user_id']
-		reputation = c['owner']['reputation']
-		post_type = post_type_dict(c['post_type'])
-		creation_date=datetime.strptime(c['creation_date'], "%Y-%m-%d %H:%M:%S")
-		comment_type_id = comment_dict(c['comment_id'])
-		
-		print "-" * 15
-		print """
-		Link => %s
-		Text => %s
-		ID => %s
-		Score => %s
-		User => %s
-		Rep => %s
-		Post Type => %s
-		Creation Date => %s
-		Comment Type => %s
-		""" % (
-		link,
-		text,
-		id,
-		score,
-		user_id,
-		reputation,
-		post_type,
-		creation_date,
-		comment_type_id,
-		)
-		
-		
-#		db.session.add(Comment(link=c.))
+    for c in comment_data:
+        link = "http://stackoverflow.com/posts/comments/%s" % (c['comment_id'])
+        text = BeautifulSoup(c['body']).get_text()
+        id = c['comment_id']
+        score = c['score']
+        user_id = c['owner']['user_id']
+        reputation = c['owner']['reputation']
+        post_type = post_type_dict(c['post_type'])
+        creation_date=datetime.strptime(c['creation_date'], "%Y-%m-%d %H:%M:%S")
+        comment_type_id = comment_dict(c['comment_id'])
+        
+        print "-" * 15
+        print """
+        Link => %s
+        Text => %s
+        ID => %s
+        Score => %s
+        User => %s
+        Rep => %s
+        Post Type => %s
+        Creation Date => %s
+        Comment Type => %s
+        """ % (
+        link,
+        text,
+        id,
+        score,
+        user_id,
+        reputation,
+        post_type,
+        creation_date,
+        comment_type_id,
+        )
+        
+        
+#        db.session.add(Comment(link=c.))
 
-	
+    
     response = {
         'success': False,
         'msg': 'Unknown Error'

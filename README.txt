@@ -19,3 +19,20 @@ Higher level goals:
 How to run:
 
  - The Flask Control panel can be run from Windows by executing the `run_flask.bat` file. If it is run within Linux, then the `PYTHONPATH` needs to be modified to include the root of this project and then you can execute `python FlaskPanel\app.py`. This modification is needed so that modules at a sibling level to `FlaskPanel` can be included.
+
+ 
+To Do:
+
+	- Dashboard Box at top of page:
+		- Comments flagged 
+			- Today  - Needs to filter to this set of data
+			- Yesterday - Needs to filter to this set of data
+			- This Week - Needs to filter to this set of data
+		- Comments added to system
+			- Today  - Needs to filter to this set of data
+			- Yesterday - Needs to filter to this set of data
+			- This Week - Needs to filter to this set of data
+		- Comment Types in system (count)
+		- Current Status (Checking Comments, Sleeping, Out of Flags for the day)
+		
+ 
