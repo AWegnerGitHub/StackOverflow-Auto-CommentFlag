@@ -32,8 +32,8 @@ class Comment(Base):
     creation_date = Column(DateTime, nullable=False)
     disputed = Column(Boolean, nullable=False, default=False, index=True)
     system_add_date = Column(DateTime, nullable=False, default=datetime.datetime.now())
-#    is_training = Column(Boolean, nullable=False, default=False)
-#    added_manually = Column(Boolean, nullable=False, default=False)
+    is_training = Column(Boolean, nullable=False, default=False)
+    added_manually = Column(Boolean, nullable=False, default=False)
 
 
 class CommentType(Base):
