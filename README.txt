@@ -34,5 +34,8 @@ To Do:
 			- This Week - Needs to filter to this set of data
 		- Comment Types in system (count)
 		- Current Status (Checking Comments, Sleeping, Out of Flags for the day)
+	- Add new models to DB
+	- Develop initial training algorithms
+
 		
  

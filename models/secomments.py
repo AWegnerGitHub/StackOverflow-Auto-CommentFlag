@@ -44,3 +44,24 @@ class CommentType(Base):
     is_active = Column(Boolean, nullable=False, default=True)
 
 
+class TrainingAlgorithm(Base):
+    """This class defines our available algorithms"""
+    __tablename__ = 'trainingalgorithms'
+    id = Column(Integer, primary_key=True, unique=True)
+    name = Column(CoerceUTF8(50, convert_unicode=True), nullable=False)
+    description = Column(CoerceUTF8(2000, convert_unicode=True), nullable=False)
+    creation_date = Column(DateTime, nullable=False)
+
+
+class TrainingResult(Base):
+    """This class defines the results of our algorithms"""
+    __tablename__ = 'trainingresults'
+    comment_id = Column(Integer, ForeignKey('comments.id'), primary_key=True, unique=True)
+    comment = relationship('Comment', backref='trainingresults')
+    comment_type_id = Column(Integer, ForeignKey('commenttypes.id'), primary_key=True, unique=True)
+    comment_type = relationship('CommentType', backref='trainingresults')
+    algorithm_id = Column(Integer, ForeignKey('trainingalgorithms.id'), primary_key=True, unique=True)
+    algorithm = relationship('TrainingAlgorithm', backref='trainingresults')
+    classification_date = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    is_correct_classification = Column(Boolean)
+
