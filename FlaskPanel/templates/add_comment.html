@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% block pagetitle %}{{ pagetitle }}{% endblock %}
 {% block headscripts %}
 	<script>
 		$(document).ready(function() 
@@ -42,20 +43,22 @@
 				data : $(this).serializeArray(),
 				success:function(data, textStatus, jqXHR) 
 				{
-					var x = $("#InputsWrapper").children("div").length;
-					$($('#InputsWrapper').children('div').get().reverse()).each(function () 
-					{
-						if (x > 1)
-						{
-							$(this).remove();
-							x--;
-						}
-						if (x == 1)
-						{
-							$("#comment_1").val("");
-							$("#type_1").val("1");
-						}
-					});
+                    if (data['success'] == true) {
+                        var x = $("#InputsWrapper").children("div").length;
+                        $($('#InputsWrapper').children('div').get().reverse()).each(function () {
+                            if (x > 1) {
+                                $(this).remove();
+                                x--;
+                            }
+                            if (x == 1) {
+                                $("#comment_1").val("");
+                                $("#type_1").val("1");
+                            }
+                        });
+                    }
+                    else {
+                        alert(data['msg']);
+                    }
 				},
 				error: function(jqXHR, textStatus, errorThrown) 
 				{
