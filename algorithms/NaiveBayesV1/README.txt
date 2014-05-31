@@ -1,0 +1,3 @@
+This Naive Bayes algorithm is based off code from [python-course.eu](http://www.python-course.eu/text_classification_python.php). It's been modified to pull data from a database and dynamically determine categories.
+
+This will be the baseline algorithm that is utilized in this project. It does not use external modules, thus will make a good baseline for comparison against other algorithms. This includes other Naive Bayes implementations in other modules. 
