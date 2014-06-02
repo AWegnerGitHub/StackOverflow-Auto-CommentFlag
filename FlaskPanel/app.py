@@ -74,7 +74,6 @@ def add_comment_data():
                 return jsonify(**response)
 
         comment_dict = dict(zip(comments, comment_types_list))
-
         # THIS IS WHERE WE PULL COMMENTS FROM API
         site = SEAPI("stackoverflow")
         comment_data = site.fetch('comments',ids=comments, filter='!1zSsiTKfrlw0eKYQiRXjG')
@@ -111,12 +110,13 @@ def add_comment_data():
             # creation_date,
             # comment_type_id,
             # )
-
             db.session.add(Comment(link=link,text=text, id=id, score=score, user_id=user_id, reputation=reputation,
                           post_type=post_type, creation_date=creation_date, comment_type_id=comment_type_id,added_manually=True))
 
         try:
             db.session.commit()
+            response['success'] = True
+            response['msg'] = "Comment(s) successfully added."
         except IntegrityError:
             response['msg'] = "Attempted to enter duplicate comment."
     else:
