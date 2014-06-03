@@ -203,18 +203,24 @@ class Pool(object):
 #        res = s.query(Comment).filter_by(comment_type_id=5).all()
 # ^ This works
 
-        res = s.query(Comment.comment_type_id, 
-                CommentType.name,
-                func.count(Comment.comment_type_id).label('count')
-            ).join(CommentType).group_by(Comment.comment_type_id).all()    
+#        res = s.query(Comment.comment_type_id, 
+#                CommentType.name,
+#                func.count(Comment.comment_type_id).label('count')
+#            ).join(CommentType).group_by(Comment.comment_type_id).all()    
+
+        res = (s.query(CommentType.id, CommentType.name,
+                func.count(CommentType.id).label('count'))
+            .select_from(CommentType).join(Comment)
+            .group_by(CommentType.id, CommentType.name)
+            )
 
         comment_types_ids = []
         comment_types = []
         for r in res:
             if r.count > threshold:
-                comment_types_ids.append(r.comment_type_id)
+                comment_types_ids.append(r.id)
                 comment_types.append(r.name)
-                logging.info('Pulling comments for %s (%s) => Count: %s' % (r.comment_type_id, r.name, r.count))
+                logging.info('Pulling comments for %s (%s) => Count: %s' % (r.id, r.name, r.count))
 
         if comment_types_ids:
             for ct in comment_types_ids:

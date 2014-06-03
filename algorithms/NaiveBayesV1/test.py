@@ -39,7 +39,7 @@ if comment_types_ids:
 
         if comments:
 			for c in comments:
-				res = p.Probability(c, dclass = "too chatty")
+				res = p.Probability(c)
 				print """
 				-----	
 				Comment => %s
