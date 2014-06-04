@@ -14,7 +14,7 @@ session = sessionmaker()
 session.configure(bind=engine)
 s = session()
 
-threshold = 20
+threshold = 1000
 
 p = Pool()
 p.learn(threshold=threshold)
