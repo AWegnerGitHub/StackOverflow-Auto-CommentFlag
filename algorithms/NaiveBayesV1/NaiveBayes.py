@@ -16,7 +16,7 @@ from models.secomments import Comment, CommentType
 LOGLEVEL_FILE = logging.INFO
 LOGLEVEL_CONSOLE = logging.INFO
 
-logging.basicConfig(filename='logs/naive_bayes_v1.log', level=LOGLEVEL_FILE,
+logging.basicConfig(filename='../../logs/naive_bayes_v1.log', level=LOGLEVEL_FILE,
                     format='%(asctime)s - %(levelname)-8s - %(name)-12s - %(message)s')
 console_log = logging.StreamHandler()
 console_log.setLevel(LOGLEVEL_CONSOLE)

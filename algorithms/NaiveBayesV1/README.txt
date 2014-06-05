@@ -60,4 +60,15 @@ Results:
 
  - *Don't use this algorithm*
  
- 
+Comment from page author when asked about results above:
+
+ > Hi Andy
+ >
+ > Thanks for your email.
+ >
+ > I can't test the set at the moment. I am not sure anymore, what the actual result has been.
+ > But your results may be right.
+ >
+ > Best wishes,
+ >
+ > Bernd
