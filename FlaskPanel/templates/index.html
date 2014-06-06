@@ -8,6 +8,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Post Date</th>
+                        <th>Added Date</th>
                         <th>Text</th>
                         <th>Comment Type</th>
                         <th>Disputed</th>
@@ -18,6 +19,7 @@
                     <tr>
                         <td><a href="{{ c.link }}">{{ c.id }}</a></td>
                         <td>{{ c.creation_date }}</td>
+                        <td>{{ c.system_add_date|friendly_time }}</td>
                         <td>{{ c.text }}</td>
                         <td><a href="#" class="comment_type" data-pk="{{ c.id }}" data-type="select" data-value="{{ c.comment_type.id }}">{{ c.comment_type.name }}</a></td>
                         <td>{{ c.disputed }}</td>
