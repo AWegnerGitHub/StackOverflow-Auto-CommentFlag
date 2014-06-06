@@ -17,6 +17,7 @@ post_type_dict = {
     "answer": 2
 }
 
+MAX_HIST_DAYS = 10000
 
 @app.route('/')
 def index():
@@ -36,13 +37,18 @@ def training_data():
 
 @app.route('/flagged_data')
 def flagged_data():
+    histdays = int(request.args.get('histdays', MAX_HIST_DAYS))
+    if histdays < 0:
+        histdays = 0
+
     return render_template('index.html',
                            comments=db.session.query(Comment).filter(Comment.comment_type_id != 1,
                                                                      Comment.is_training == False,
-                                                                     Comment.added_manually == False
+                                                                     Comment.added_manually == False,
+                                                                     Comment.system_add_date >= date.today() - timedelta(days=histdays),
                                 ).order_by(Comment.creation_date.desc()).all(),
                            header_counts=populate_header_counts(),
-                           pagetitle="Training Data")
+                           pagetitle="Flagged Data")
 
 @app.route('/disputed_comments')
 def disputed_data():
@@ -55,20 +61,30 @@ def disputed_data():
 
 @app.route('/automated_data')
 def automated_data():
+    histdays = int(request.args.get('histdays', MAX_HIST_DAYS))
+    if histdays < 0:
+        histdays = 0
+
     return render_template('index.html',
-                           comments=db.session.query(Comment).filter_by(added_manually=False,
-                                                                        is_training=False).order_by(
-                               Comment.creation_date.desc()).all(),
+                           comments=db.session.query(Comment).filter(Comment.added_manually == False,
+                                                                        Comment.is_training == False,
+                                                                        Comment.system_add_date >= date.today() - timedelta(days=histdays)
+                           ).order_by(Comment.creation_date.desc()).all(),
                            header_counts=populate_header_counts(),
                            pagetitle="Automatically Added Comments")
 
 
 @app.route('/manual_data')
 def manual_data():
+    histdays = int(request.args.get('histdays', MAX_HIST_DAYS))
+    if histdays < 0:
+        histdays = 0
+
     return render_template('index.html',
-                           comments=db.session.query(Comment).filter_by(added_manually=True,
-                                                                        is_training=False).order_by(
-                               Comment.creation_date.desc()).all(),
+                           comments=db.session.query(Comment).filter(Comment.added_manually == True,
+                                                                     Comment.is_training == False,
+                                                                     Comment.system_add_date >= date.today() - timedelta(days=histdays)
+                           ).order_by(Comment.creation_date.desc()).all(),
                            header_counts=populate_header_counts(),
                            pagetitle="Manually Added Comments")
 
