@@ -23,19 +23,12 @@ How to run:
  
 To Do:
 
-	- Dashboard Box at top of page:
-		- Comments flagged 
-			- Today  - Needs to filter to this set of data
-			- Yesterday - Needs to filter to this set of data
-			- This Week - Needs to filter to this set of data
-		- Comments added to system
-			- Today  - Needs to filter to this set of data
-			- Yesterday - Needs to filter to this set of data
-			- This Week - Needs to filter to this set of data
-		- Comment Types in system (count)
-		- Current Status (Checking Comments, Sleeping, Out of Flags for the day)
 	- Develop initial training algorithms
 	- Send access token along with API calls
+    - Develop background daemon that pulls comments on scheduled basis and puts them into table
+    - Develop process that looks at new comments and classifies them
+    - Develop process that flags appropriate comments
+      - Should use `TrainingAlgorithm` and `TrainingResult` tables
 
 		
  
