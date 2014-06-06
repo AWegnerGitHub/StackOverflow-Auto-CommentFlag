@@ -23,12 +23,16 @@ How to run:
  
 To Do:
 
-	- Develop initial training algorithms
-	- Send access token along with API calls
-    - Develop background daemon that pulls comments on scheduled basis and puts them into table
-    - Develop process that looks at new comments and classifies them
-    - Develop process that flags appropriate comments
-      - Should use `TrainingAlgorithm` and `TrainingResult` tables
+ - Develop initial training algorithms
+ - Send access token along with API calls
+ - Develop background daemon that pulls comments on scheduled basis and puts them into table
+ - Develop process that looks at new comments and classifies them
+ - Develop process that flags appropriate comments
+   - Should use `TrainingAlgorithm` and `TrainingResult` tables
+ - Compress classifier results and save
+   - [Compress/decompress](http://henrysmac.org/blog/2010/3/15/python-pickle-example-including-gzip-for-compression.html) pickled object and ensure it is compressed at end of script
+   - [Alternative using bz2](http://stackoverflow.com/questions/18474791/decreasing-the-size-of-cpickle-objects), though it looks like [gzip is faster and bzip has better compression](http://tukaani.org/lzma/benchmarks.html)
+
 
 		
  
