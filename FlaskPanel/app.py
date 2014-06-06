@@ -73,8 +73,7 @@ def manual_data():
 
 @app.route('/add_comments')
 def add_comments():
-    header_counts = populate_header_counts()
-    return render_template('add_comment.html', header_counts=header_counts, suppress_overview=True, pagetitle="Add Comments")
+    return render_template('add_comment.html', suppress_overview=True, pagetitle="Add Comments")
 
 
 @app.route('/add_comment_data', methods=['POST'])
