@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import func
 from models.secomments import Comment, CommentType
 from SEAPI.SEAPI import SEAPI, SEAPIError
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 app = Flask(__name__)
 app.config.from_pyfile('app.cfg')
@@ -17,8 +18,19 @@ post_type_dict = {
 
 @app.route('/')
 def index():
+    comment_cnts = (db.session.query(CommentType.id, CommentType.name,
+                func.count(CommentType.id).label('count'))
+            .select_from(CommentType).join(Comment)
+            .group_by(CommentType.id, CommentType.name)
+            )
+	comments_add_yesterday = comments=db.session.query(Comment).filter(Comment.system_add_date = date.today()-timedelta(days=1)).count()
+	comments_add_today = comments=db.session.query(Comment).filter(Comment.system_add_date >= date.today()-timedelta(days=0)).count()
+    comments_add_this_week = comments=db.session.query(Comment).filter(Comment.system_add_date >= date.today()-timedelta(days=7)).count()
+    
     return render_template('index.html',
                             comments=db.session.query(Comment).filter_by(id=0).order_by(Comment.creation_date.desc()).all(),
+                            comment_cnt = comment_cnts,
+                            comments_add_this_week = comments_add_this_week,
                             pagetitle="Main")
 
 
