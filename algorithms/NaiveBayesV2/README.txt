@@ -8,7 +8,7 @@ This version requires that the corpora for TextBlob be downloaded prior to being
 
     python -m textblob.download_corpora
 
-A pickled copy of the classifier will be saved into the directory, to prevent the long training session from occurring, unless the `TRAIN` variable is set to true, and the pickled object exists.
+A pickled copy of the classifier will be saved into the directory, to prevent the long training session from occurring, unless the `TRAIN` variable is set to true, and the pickled object exists. The pickled classifier is ~150MB when using a threshold of 700.
 
 Results:
 
@@ -104,4 +104,6 @@ Things to investigate:
    - [Objectivity of comment](https://textblob.readthedocs.org/en/latest/quickstart.html#sentiment-analysis)
  - [Updating saved](https://textblob.readthedocs.org/en/latest/classifiers.html#loading-data-and-creating-a-classifier) classifier
  - DEBUG logging with [probability](https://textblob.readthedocs.org/en/latest/classifiers.html#classifying-text) of each type
+ - [Compress/decompress](http://henrysmac.org/blog/2010/3/15/python-pickle-example-including-gzip-for-compression.html) pickled object and ensure it is compressed at end of script
+   - [Alternative using bz2](http://stackoverflow.com/questions/18474791/decreasing-the-size-of-cpickle-objects), though it looks like [gzip is faster and bzip has better compression](http://tukaani.org/lzma/benchmarks.html)
 
