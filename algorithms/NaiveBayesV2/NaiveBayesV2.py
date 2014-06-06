@@ -7,9 +7,14 @@ from text.classifiers import NaiveBayesClassifier
 from text.blob import TextBlob
 import random
 import math
+import pickle
+import datetime
 
 import models.base as base
 from models.secomments import Comment, CommentType
+
+TRAIN = False
+CLASSIFIER_NAME = "naivebayesv2.pickle"
 
 LOGLEVEL_FILE = logging.INFO
 LOGLEVEL_CONSOLE = logging.INFO
@@ -30,6 +35,7 @@ session = sessionmaker()
 session.configure(bind=engine)
 s = session()
 logging.debug('Connected to Database')
+
 
 
 def get_training_data(threshold=1000):
@@ -64,28 +70,44 @@ def get_training_data(threshold=1000):
 
         return training_list
 
+start_time = datetime.datetime.now()
+logging.info("Start time: {0}".format(start_time))
+cl = None           # Our eventual classifier
+if TRAIN or (not TRAIN and not os.path.isfile(CLASSIFIER_NAME)):
+    logging.info("Training session in progress. Gathering data.")
+    data = get_training_data(threshold=700)
+    random.shuffle(data)
+    train, test = data[:int(math.floor(len(data)*TRAINING_RATIO))], data[int(math.ceil(len(data)*TRAINING_RATIO)):]
 
+    logging.info("Data Set Size => {0}".format(len(data)))
+    logging.info("Training Set Size => {0}".format(len(train)))
+    logging.info("Test Set Size => {0}".format(len(test)))
+    entire_set = len(data) == len(train) + len(test)
+    logging.log(logging.WARNING if not entire_set else logging.INFO, "Entire data set allocated => {0}".format(entire_set))
 
-data = get_training_data(threshold=1000)
-random.shuffle(data)
-train, test = data[:int(math.floor(len(data)*TRAINING_RATIO))], data[int(math.ceil(len(data)*TRAINING_RATIO)):]
+    logging.info("Training NaiveBayes Classifier")
+    cl = NaiveBayesClassifier(train)
 
-logging.info("Data Set Size => {0}".format(len(data)))
-logging.info("Training Set Size => {0}".format(len(train)))
-logging.info("Test Set Size => {0}".format(len(test)))
-entire_set = len(data) == len(train) + len(test)
-logging.log(logging.WARNING if not entire_set else logging.INFO, "Entire data set allocated => {0}".format(entire_set))
+    logging.info("Saving classifier to {0}".format(CLASSIFIER_NAME))
+    f = open(CLASSIFIER_NAME, 'wb')
+    pickle.dump(cl, f)
+    f.close()
 
-logging.info("Training NaiveBayes Classifier")
-cl = NaiveBayesClassifier(train)
+    print("Accuracy: {0}".format(cl.accuracy(test)))
+else:
+    logging.info("Opening classifier from {0}".format(CLASSIFIER_NAME))
+    f = open(CLASSIFIER_NAME, 'rb')
+    cl = pickle.load(f)
+    f.close()
 
-
-# Compute accuracy
-print("Accuracy: {0}".format(cl.accuracy(test)))
 
 logging.info("Listing Informative Features")
 # Show 5 most informative features
 cl.show_informative_features(30)
+
+end_time = datetime.datetime.now()
+logging.info("Start time: {0}".format(end_time))
+logging.info("Elapsed Time: {0}".format(end_time-start_time))
 
 
 

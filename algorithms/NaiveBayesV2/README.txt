@@ -8,6 +8,7 @@ This version requires that the corpora for TextBlob be downloaded prior to being
 
     python -m textblob.download_corpora
 
+A pickled copy of the classifier will be saved into the directory, to prevent the long training session from occurring, unless the `TRAIN` variable is set to true, and the pickled object exists.
 
 Results:
 
@@ -99,7 +100,6 @@ Both types of comments are detected. The 90% detection is nice as well. The down
 Things to investigate:
 
  - Ways to speed up training
- - Way to [save/load](http://stackoverflow.com/questions/17262339/save-and-load-testing-classify-naive-bayes-classifier-in-nltk-in-another-method) [classifier](http://stackoverflow.com/questions/10017086/save-naive-bayes-trained-classifier-in-nltk) so that the system doesn't need to retrain each run
  - Possible custom feature extraction
    - [Objectivity of comment](https://textblob.readthedocs.org/en/latest/quickstart.html#sentiment-analysis)
  - [Updating saved](https://textblob.readthedocs.org/en/latest/classifiers.html#loading-data-and-creating-a-classifier) classifier
