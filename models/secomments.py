@@ -65,3 +65,8 @@ class TrainingResult(Base):
     classification_date = Column(DateTime, nullable=False, default=datetime.datetime.now())
     is_correct_classification = Column(Boolean)
 
+class Setting(Base):
+    """This class defines settings that our application uses"""
+    __tablename__ = 'settings'
+    name = Column(CoerceUTF8(125, convert_unicode=True), primary_key=True, unique=True)
+    value = Column(CoerceUTF8(500, convert_unicode=True), nullable=False)
