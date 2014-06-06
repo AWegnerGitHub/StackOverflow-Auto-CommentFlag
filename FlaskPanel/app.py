@@ -20,62 +20,56 @@ post_type_dict = {
 
 @app.route('/')
 def index():
-    header_counts = populate_header_counts()
     return render_template('index.html',
                        comments=db.session.query(Comment).filter_by(id=0).order_by(Comment.creation_date.desc()).all(),
-                       header_counts=header_counts,
+                       header_counts=populate_header_counts(),
                        pagetitle="Main")
 
 
 @app.route('/training_data')
 def training_data():
-    header_counts = populate_header_counts()
     return render_template('index.html',
                            comments=db.session.query(Comment).filter_by(is_training=True).order_by(
                                Comment.creation_date.desc()).all(),
-                           header_counts=header_counts,
+                           header_counts=populate_header_counts(),
                            pagetitle="Training Data")
 
 @app.route('/flagged_data')
 def flagged_data():
-    header_counts = populate_header_counts()
     return render_template('index.html',
                            comments=db.session.query(Comment).filter(Comment.comment_type_id != 1,
                                                                      Comment.is_training == False,
                                                                      Comment.added_manually == False
                                 ).order_by(Comment.creation_date.desc()).all(),
-                           header_counts=header_counts,
+                           header_counts=populate_header_counts(),
                            pagetitle="Training Data")
 
 @app.route('/disputed_comments')
 def disputed_data():
-    header_counts = populate_header_counts()
     return render_template('index.html',
                            comments=db.session.query(Comment).filter_by(disputed=True).order_by(
                                Comment.creation_date.desc()).all(),
-                           header_counts=header_counts,
+                           header_counts=populate_header_counts(),
                            pagetitle="Disputed Comments")
 
 
 @app.route('/automated_data')
 def automated_data():
-    header_counts = populate_header_counts()
     return render_template('index.html',
                            comments=db.session.query(Comment).filter_by(added_manually=False,
                                                                         is_training=False).order_by(
                                Comment.creation_date.desc()).all(),
-                           header_counts=header_counts,
+                           header_counts=populate_header_counts(),
                            pagetitle="Automatically Added Comments")
 
 
 @app.route('/manual_data')
 def manual_data():
-    header_counts = populate_header_counts()
     return render_template('index.html',
                            comments=db.session.query(Comment).filter_by(added_manually=True,
                                                                         is_training=False).order_by(
                                Comment.creation_date.desc()).all(),
-                           header_counts=header_counts,
+                           header_counts=populate_header_counts(),
                            pagetitle="Manually Added Comments")
 
 
