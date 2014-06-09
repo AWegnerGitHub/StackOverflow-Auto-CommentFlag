@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% block pagetitle %}{{ pagetitle }}{% endblock %}
+{% block headscripts %}
+	<script>
+		$(document).ready(function() 
+		{
+			var MaxInputs       = 99; //maximum input boxes allowed
+			var InputsWrapper   = $("#InputsWrapper"); //Input boxes wrapper ID
+			var AddButton       = $("#AddMoreFileBox"); //Add button ID
+
+			var x = InputsWrapper.length; //initlal text box count
+			var FieldCount=1; //to keep track of text box added
+
+			$(AddButton).click(function (e)  //on add input button click
+			{
+				if(x <= MaxInputs) //max input box allowed
+				{
+					FieldCount++; //text box added increment
+					//add input box
+					$(InputsWrapper).append('<div><input type="text" name="settingsnames[]" size="50" id="settingname_'+ FieldCount +'" value=""/> <input type="text" name="settingsvalues[]" size="50" id="settingvalue_'+ FieldCount +'" value=""/> <a href="#" class="removeclass">&times;</a> </div>');
+					x++; //text box increment
+				}
+				return false;
+			});
+
+			$("body").on("click",".removeclass", function(e)
+			{ //user click on remove text
+				if( x > 1 ) {
+					$(this).parent('div').remove(); //remove text box
+					x--; //decrement textbox
+				}
+				return false;
+			})
+		});	
+		
+		$(document).on('submit', '#new_settings', function()
+		{
+//			e.preventDefault();	//STOP default action
+			$.ajax(
+			{
+				url : $(this).attr("action"),
+				type: "POST",
+				data : $(this).serializeArray(),
+				success:function(data, textStatus, jqXHR) 
+				{
+                    if (data['success'] == true) {
+                        var x = $("#InputsWrapper").children("div").length;
+                        $($('#InputsWrapper').children('div').get().reverse()).each(function () {
+                            if (x > 1) {
+                                $(this).remove();
+                                x--;
+                            }
+                            if (x == 1) {
+                                $("#settingname_1").val("");
+                                $("#settingvalue_1").val("1");
+                            }
+                        });
+                    }
+                    else {
+                        alert(data['msg']);
+                    }
+				},
+				error: function(jqXHR, textStatus, errorThrown) 
+				{
+					alert("Error: " + errorThrown);
+				}
+			});
+			return false;
+		});
+	</script>
+{% endblock %}
+
+{% block commenttable %}
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="#" id="AddMoreFileBox" class="btn btn-info">Add Fields</a></span>
+		</div>
+		<div class="col-sm-12">
+			<form name="new_settings" id="new_settings" action="{{ url_for('add_setting_data') }}" method="POST">
+			<div id="InputsWrapper">
+				<div>
+					<input type="text" name="settingsnames[]" size="50" id="settingname_1" value=""/>
+					<input type="text" name="settingsvalues[]" size="50" id="settingvalue_1" value=""/>
+					<a href="#" class="removeclass">&times;</a>
+				</div>
+			</div>
+			<button class="btn btn-info" id="simple-post">Add Settings</button>
+			</form>
+        </div>
+		
+    </div>
+{% endblock %}

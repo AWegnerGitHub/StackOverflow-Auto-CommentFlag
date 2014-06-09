@@ -95,12 +95,44 @@ def settings():
                            settings=db.session.query(Setting).order_by(Setting.name.asc()).all(),
                            suppress_overview=True,
                            pagetitle="Settings")
+                           
+
+@app.route('/add_settings')
+def add_settings():
+    return render_template('add_setting.html', suppress_overview=True, pagetitle="Add Settings")
 
 
 @app.route('/add_comments')
 def add_comments():
     return render_template('add_comment.html', suppress_overview=True, pagetitle="Add Comments")
 
+    
+@app.route('/add_setting_data', methods=['POST'])
+def add_setting_data():
+    settings_list = request.form.getlist('settingsnames[]')
+    settings_values_list = request.form.getlist('settingsvalues[]')    
+    settings = []
+    response = {
+        'success': False,
+        'msg': 'Unknown Error'
+    }
+    
+    if settings_list[0]:
+        settings_dict = zip(settings_list, settings_values_list)
+        import pprint
+        pprint.pprint(settings_dict, indent=4)
+        for s in settings_dict:
+            db.session.add(Setting(name=s[0], value=s[1]))
+            
+        try:
+            db.session.commit()
+            response['success'] = True
+            response['msg'] = "Settings(s) successfully added."
+        except IntegrityError:
+            response['msg'] = "Attempted to enter duplicate setting name."
+    else:
+        response['msg'] = "No settings input."
+    return jsonify(**response)
 
 @app.route('/add_comment_data', methods=['POST'])
 def add_comment_data():
