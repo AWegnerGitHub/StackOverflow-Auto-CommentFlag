@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func
-from models.secomments import Comment, CommentType
+from models.secomments import Comment, CommentType, Setting
 from SEAPI.SEAPI import SEAPI, SEAPIError
 from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
@@ -87,6 +87,14 @@ def manual_data():
                            ).order_by(Comment.creation_date.desc()).all(),
                            header_counts=populate_header_counts(),
                            pagetitle="Manually Added Comments")
+
+
+@app.route('/settings')
+def settings():
+    return render_template('settings.html',
+                           settings=db.session.query(Setting).order_by(Setting.name.asc()).all(),
+                           suppress_overview=True,
+                           pagetitle="Settings")
 
 
 @app.route('/add_comments')

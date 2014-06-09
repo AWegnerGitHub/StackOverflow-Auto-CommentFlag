@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block pagetitle %}{{ pagetitle }}{% endblock %}
+{% block commenttable %}
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="comment_tbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for c in settings %}
+                    <tr>
+                        <td>{{ c.name }}</td>
+                        <td>{{ c.creation_date }}</td>
+                        <td>{{ c.system_add_date|friendly_time }}</td>
+                        <td>{{ c.text }}</td>
+                        <td><a href="#" class="comment_type" data-pk="{{ c.name }}" data-type="text" data-value="{{ c.value }}">{{ c.value }}</a></td>
+                        <td>{{ c.disputed }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
