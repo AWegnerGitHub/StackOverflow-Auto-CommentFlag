@@ -119,8 +119,6 @@ def add_setting_data():
     
     if settings_list[0]:
         settings_dict = zip(settings_list, settings_values_list)
-        import pprint
-        pprint.pprint(settings_dict, indent=4)
         for s in settings_dict:
             db.session.add(Setting(name=s[0], value=s[1]))
             
