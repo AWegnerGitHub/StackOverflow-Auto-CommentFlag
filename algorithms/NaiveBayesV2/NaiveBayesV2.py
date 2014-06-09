@@ -8,13 +8,14 @@ from text.blob import TextBlob
 import random
 import math
 import pickle
+import bz2
 import datetime
 
 import models.base as base
 from models.secomments import Comment, CommentType
 
 TRAIN = False
-CLASSIFIER_NAME = "naivebayesv2.pickle"
+CLASSIFIER_NAME = "naivebayesv2.pickle.bz2"
 
 LOGLEVEL_FILE = logging.INFO
 LOGLEVEL_CONSOLE = logging.INFO
@@ -88,26 +89,22 @@ if TRAIN or (not TRAIN and not os.path.isfile(CLASSIFIER_NAME)):
     logging.info("Training NaiveBayes Classifier")
     cl = NaiveBayesClassifier(train)
 
-    logging.info("Saving classifier to {0}".format(CLASSIFIER_NAME))
-    f = open(CLASSIFIER_NAME, 'wb')
+    logging.info("Saving classifier to {0}".format(CLASSIFIER_NAME ))
+    f = bz2.BZ2File(CLASSIFIER_NAME, 'wb')
     pickle.dump(cl, f)
     f.close()
 
     print("Accuracy: {0}".format(cl.accuracy(test)))
 else:
     logging.info("Opening classifier from {0}".format(CLASSIFIER_NAME))
-    f = open(CLASSIFIER_NAME, 'rb')
+    f = bz2.BZ2File(CLASSIFIER_NAME, 'rb')
     cl = pickle.load(f)
     f.close()
 
 
 logging.info("Listing Informative Features")
-# Show 5 most informative features
 cl.show_informative_features(30)
 
 end_time = datetime.datetime.now()
-logging.info("Start time: {0}".format(end_time))
+logging.info("End time: {0}".format(end_time))
 logging.info("Elapsed Time: {0}".format(end_time-start_time))
-
-
-

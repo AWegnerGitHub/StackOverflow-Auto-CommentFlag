@@ -8,7 +8,17 @@ This version requires that the corpora for TextBlob be downloaded prior to being
 
     python -m textblob.download_corpora
 
-A pickled copy of the classifier will be saved into the directory, to prevent the long training session from occurring, unless the `TRAIN` variable is set to true, and the pickled object exists. The pickled classifier is ~150MB when using a threshold of 700.
+A pickled copy of the classifier will be saved into the directory, to prevent the long training session from occurring. If the `TRAIN` variable is set to true, and the pickled object exists, a new training session will not occur, instead the existing data will be used. However, if the object doesn't exist, a new training session will begin. The pickled classifier is ~141MB when using a threshold of 700.
+
+When training, the system will use the `TRAINING_RATIO` variable to pull out this percentage (expressed as a decimal) of data to train the system and the remainder to test the system and come up with an `accuracy` value.
+
+This object will be compressed, using bz2. This was chosen over gzip, because of the time taken to compress/decompress and improved compression offered by bz2.
+
+    |                    | gzip       | bz2        |
+    |--------------------|------------|------------|
+    | Compression Time   | 5min 7sec  | 1min 49sec |
+    | Decompression Time | 1min 59sec | 1min 43sec |
+    | Compressed Size    | 33 MB      | 18 MB      |
 
 Results:
 
@@ -104,6 +114,4 @@ Things to investigate:
    - [Objectivity of comment](https://textblob.readthedocs.org/en/latest/quickstart.html#sentiment-analysis)
  - [Updating saved](https://textblob.readthedocs.org/en/latest/classifiers.html#loading-data-and-creating-a-classifier) classifier
  - DEBUG logging with [probability](https://textblob.readthedocs.org/en/latest/classifiers.html#classifying-text) of each type
- - [Compress/decompress](http://henrysmac.org/blog/2010/3/15/python-pickle-example-including-gzip-for-compression.html) pickled object and ensure it is compressed at end of script
-   - [Alternative using bz2](http://stackoverflow.com/questions/18474791/decreasing-the-size-of-cpickle-objects), though it looks like [gzip is faster and bzip has better compression](http://tukaani.org/lzma/benchmarks.html)
 
