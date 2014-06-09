@@ -34,9 +34,9 @@ class Comment(Base):
     system_add_date = Column(DateTime, nullable=False, default=datetime.datetime.now())
     is_training = Column(Boolean, nullable=False, default=False)
     added_manually = Column(Boolean, nullable=False, default=False)
-	
-	def __repr__(self):
-		return "<Comment(id='%s', text='%s', comment_type='%s', link='%s')>" % (self.id, self.text, self.comment_type, self.link)
+    
+    def __repr__(self):
+        return "<Comment(id='%s', text='%s', comment_type='%s', link='%s')>" % (self.id, self.text, self.comment_type, self.link)
 
 
 class CommentType(Base):
@@ -45,9 +45,9 @@ class CommentType(Base):
     id = Column(Integer, primary_key=True, unique=True)
     name = Column(CoerceUTF8(50, convert_unicode=True), nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
-	
-	def __repr__(self):
-		return "<CommentType(id='%s', name='%s', is_active='%s')>" % (self.id, self.name, self.is_active)
+    
+    def __repr__(self):
+        return "<CommentType(id='%s', name='%s', is_active='%s')>" % (self.id, self.name, self.is_active)
 
 
 class TrainingAlgorithm(Base):
@@ -77,7 +77,7 @@ class Setting(Base):
     __tablename__ = 'settings'
     name = Column(CoerceUTF8(125, convert_unicode=True), primary_key=True, unique=True)
     value = Column(CoerceUTF8(500, convert_unicode=True), nullable=False)
-	
-	def __repr__(self):
-		return "<Setting(name='%s', value='%s')>" % (self.name, self.value)
+    
+    def __repr__(self):
+        return "<Setting(name='%s', value='%s')>" % (self.name, self.value)
 
