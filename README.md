@@ -24,6 +24,8 @@ Settings:
 
 The System has several dynamic settings. Using the Flask control panel, these can be adjusted.
 
+ - `classify_max_character_limit` - System will attempt to classify comments less than this character limit (used in combination with other `classify_*` settings).
+ - `classify_max_score` - System will attempt to classify comments that have this score or less (used in combination with other `classify_*` settings).
  - `current_status` - The current status of the flagging application. This should *NOT* be adjusted manually.
  - `current_status_datetime` - The timestamp of when `current_status` changed. This should *NOT* be adjusted manually.
  - `current_status_last_run_datetime` - The last time the flagging application ran. This should *NOT* be adjusted manually.
