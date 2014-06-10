@@ -17,7 +17,13 @@ post_type_dict = {
     "answer": 2
 }
 
-MAX_HIST_DAYS = 10000
+try:
+    MAX_HIST_DAYS = int(Setting.by_name(db.session, 'max_history_days'))
+except ValueError:
+    MAX_HIST_DAYS = 10000
+    db.session.query(Setting).filter_by(name='max_history_days').update(dict(value=MAX_HIST_DAYS))
+    db.session.commit()
+    
 
 @app.route('/')
 def index():
@@ -204,6 +210,26 @@ def add_comment_data():
     return jsonify(**response)
 
 
+@app.route('/update_setting', methods=['POST'])    
+def update_setting():
+    pk = request.form.get('pk', -1)
+    val = request.form.get('value', -1)
+    
+    response = {
+        'success': False,
+        'msg': 'Unknown Error'
+    }
+    
+    if not val:
+        response['msg'] = "Empty Value inserted. Not allowed."
+    else:
+        db.session.query(Setting).filter_by(name=pk).update(dict(value=val))
+        db.session.commit()
+        response['success'] = True
+        response['msg'] = "Updated Setting ID: %s to: %s" % (pk, val)
+    return jsonify(**response)    
+        
+    
 @app.route('/update_comment', methods=['POST'])
 def update_comment():
     pk = request.form.get('pk', -1, type=int)
@@ -217,7 +243,6 @@ def update_comment():
     if pk < 0 or val < 0:
         response['msg'] = "Invalid values passed. Attempted to update Comment ID: %s to Comment Type: %s" % (pk, val)
     else:
-        #        db.session.query(Comment).update({"id": pk, "comment_type_id": val})
         db.session.query(Comment).filter_by(id=pk).update(dict(comment_type_id=val))
         db.session.commit()
         response['success'] = True
