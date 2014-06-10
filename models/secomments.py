@@ -83,4 +83,4 @@ class Setting(Base):
 
     @classmethod
     def by_name(cls, session, name):
-        return session.query(cls).filter(cls.name == name).first()
+        return session.query(cls.value).filter(cls.name == name).scalar()
