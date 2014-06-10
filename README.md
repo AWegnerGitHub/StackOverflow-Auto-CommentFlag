@@ -44,6 +44,5 @@ To Do:
  - Develop process that looks at new comments and classifies them
  - Develop process that flags appropriate comments
    - Should use `TrainingAlgorithm` and `TrainingResult` tables
- - Populate settings in populate db (with appropriate defaults)
- - Add `user_manage` column to settings table and only populate the `settings` view with `user_manage` = True		
+ - Populate settings in populate db (with appropriate defaults)	
  

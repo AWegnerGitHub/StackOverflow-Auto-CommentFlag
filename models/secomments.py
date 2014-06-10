@@ -77,6 +77,7 @@ class Setting(Base):
     __tablename__ = 'settings'
     name = Column(CoerceUTF8(125, convert_unicode=True), primary_key=True, unique=True)
     value = Column(CoerceUTF8(500, convert_unicode=True), nullable=False)
+    user_manage = Column(Boolean, nullable=False, default=True)
     
     def __repr__(self):
         return "<Setting(name='%s', value='%s')>" % (self.name, self.value)
