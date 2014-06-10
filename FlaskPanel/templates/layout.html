@@ -59,6 +59,36 @@
                     { type: "select", values: [ 'True', 'False'] }
                 ]
             });
+			
+			$('#settings_tbl').dataTable({
+                "aaSorting": [
+                    [ 0, "desc" ]
+                ],
+                "lengthMenu": [
+                    [50, 250, 500, 1000],
+                    [50, 250, 500, 1000]
+                ],
+                "iDisplayLength": 250,
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {				
+                    $('#settings_tbl a.setting_value').editable({
+                        type: 'text',
+                        name: 'Setting Value',
+                        title: 'Setting Value',
+                        url: "{{ url_for('update_setting') }}",
+                        ajaxOptions: {
+                            type: 'post'
+                        },
+                        onblur: 'submit',
+                        send: 'always'
+                    });
+                }
+            }).columnFilter({
+                sPlaceHolder: "head:after",
+                aoColumns: [
+                    { type: "text" },
+					{ type: "text" }
+                ]
+            });
 
             $('#comment_tbl .editable').on('hidden', function (e, reason) {
                 if (reason === 'save' || reason === 'nochange') {
