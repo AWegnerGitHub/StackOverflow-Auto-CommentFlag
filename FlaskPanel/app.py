@@ -91,6 +91,8 @@ def manual_data():
 
 @app.route('/settings')
 def settings():
+#    print Setting.by_name(db.session, 'se_api_token')
+#    print Setting.by_name(db.session, 'dont_exist')
     return render_template('settings.html',
                            settings=db.session.query(Setting).order_by(Setting.name.asc()).all(),
                            suppress_overview=True,

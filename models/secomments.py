@@ -81,3 +81,6 @@ class Setting(Base):
     def __repr__(self):
         return "<Setting(name='%s', value='%s')>" % (self.name, self.value)
 
+    @classmethod
+    def by_name(cls, session, name):
+        return session.query(cls).filter(cls.name == name).first()
