@@ -20,6 +20,21 @@ How to run:
 
  - The Flask Control panel can be run from Windows by executing the `run_flask.bat` file. If it is run within Linux, then the `PYTHONPATH` needs to be modified to include the root of this project and then you can execute `python FlaskPanel\app.py`. This modification is needed so that modules at a sibling level to `FlaskPanel` can be included.
 
+Settings:
+
+The System has several dynamic settings. Using the Flask control panel, these can be adjusted.
+
+ - `current_status` - The current status of the flagging application. This should *NOT* be adjusted manually.
+ - `current_status_datetime` - The timestamp of when `current_status` changed. This should *NOT* be adjusted manually.
+ - `current_status_last_run_datetime` - The last time the flagging application ran. This should *NOT* be adjusted manually.
+ - `current_status_next_run_datetime` - The next scheduled run time of the flagging application. This should *NOT* be adjusted manually.
+ - `flagging_enabled` - True/False value that will determine whether to flag comments on StackOverflow
+ - `flagging_max_comments_retreive` - Maximium number of comments to retrieve per run. Default is 1000 and this equates to 10 pages at 100 comments per page (10 API calls).
+ - `max_history_days` - Number of previous days to include when pulling data from database.
+ - `min_sleep_between_comment_fetch` - Time between comment retreivals. The system may scale this time, but it will never drop below this limit.
+ - `min_sleep_between_flags` - Time between issuing a flag. The system may scale this time, but it will never drop below this limit.
+ - `se_api_remaining_quota` - Number of calls to the API remaining. If this reaches zero, the system will stop retreiving comments until the next UTC day. This should *NOT* be adjusted manually.
+ - `se_api_token` - StackOverflow access token used when making API calls.
  
 To Do:
 
@@ -29,8 +44,6 @@ To Do:
  - Develop process that looks at new comments and classifies them
  - Develop process that flags appropriate comments
    - Should use `TrainingAlgorithm` and `TrainingResult` tables
- - Use `Setting` model
- - In `settings` Flask page, allow creation of new setting
-
-		
+ - Populate settings in populate db (with appropriate defaults)
+ - Add `user_manage` column to settings table and only populate the `settings` view with `user_manage` = True		
  
