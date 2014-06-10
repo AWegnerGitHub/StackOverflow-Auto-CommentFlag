@@ -121,7 +121,7 @@
 		<div class="header">
 			<div class="row">
 				<div class="col-sm-12">
-					<h3 class="text-muted">Comments in the System</h3>
+					<h3 class="text-muted"><a href="{{ url_for('index') }}">Comments in the System</a> {% block subtitle %}{% endblock %}</h3>
 					<h5><a href="{{ url_for('training_data') }}">Training</a> | <a href="{{ url_for('flagged_data') }}">Flagged</a> |
                         <a href="{{ url_for('manual_data') }}">Manually Added</a> | <a href="{{ url_for('automated_data') }}">System Added</a> |
                         <a href="{{ url_for('disputed_data') }}">Disputed</a> | <a href="{{ url_for('add_comments') }}">Add Comments</a> | 
@@ -133,6 +133,18 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<h3 class="text-muted">Overview</h3>
+					<div class="row">
+						<div class="col-sm-12">
+							<table class="table table-condensed">
+								<thead>
+									<tr><th>Current Status</th><th>Status Date</th><th>Quota Remaining</th><th>Flagging Enabled</th><th>Time to New UTC</th></tr>
+								</thead>
+								<tbody>
+									<tr><td>{{ header_counts.current_status }}</td><td>{{ header_counts.current_status_date }}</td><td>{{ header_counts.quota_remaining }}</td><td>{{ header_counts.flagging_enabled }}</td><td>{{ header_counts.time_to_new_day }}</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-sm-3">
 							<table class="table table-condensed">
