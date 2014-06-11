@@ -24,6 +24,8 @@ except ValueError:
     db.session.query(Setting).filter_by(name='max_history_days').update(dict(value=MAX_HIST_DAYS))
     db.session.commit()
     
+API_TOKEN = Setting.by_name(db.session, 'se_api_token')
+    
 
 @app.route('/')
 def index():
@@ -112,7 +114,8 @@ def add_settings():
 
 @app.route('/add_comments')
 def add_comments():
-    return render_template('add_comment.html', suppress_overview=True, pagetitle="Add Comments")
+    token_set = True if API_TOKEN else False
+    return render_template('add_comment.html', suppress_overview=True, token_set=token_set, pagetitle="Add Comments")
 
     
 @app.route('/add_setting_data', methods=['POST'])
@@ -170,7 +173,7 @@ def add_comment_data():
             user_id = c['owner']['user_id']
             reputation = c['owner']['reputation']
             post_type = post_type_dict[c['post_type']]
-            creation_date = datetime.fromtimestamp(c['creation_date'])  # .strftime("%Y-%m-%d %H:%M:%S")
+            creation_date = datetime.fromtimestamp(c['creation_date'])  
             comment_type_id = comment_dict[unicode(c['comment_id'])]
 
             # print "-" * 15
@@ -197,7 +200,7 @@ def add_comment_data():
             # )
             db.session.add(Comment(link=link, text=text, id=id, score=score, user_id=user_id, reputation=reputation,
                                    post_type=post_type, creation_date=creation_date, comment_type_id=comment_type_id,
-                                   added_manually=True))
+                                   added_manually=True, system_add_date=datetime.utcnow()))
 
         try:
             db.session.commit()

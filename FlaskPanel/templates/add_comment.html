@@ -72,6 +72,7 @@
 {% endblock %}
 
 {% block commenttable %}
+	{% if token_set %}
     <div class="row">
         <div class="col-sm-12">
             <a href="#" id="AddMoreFileBox" class="btn btn-info">Add Fields</a></span>
@@ -88,6 +89,12 @@
 			<button class="btn btn-info" id="simple-post">Add Comments</button>
 			</form>
         </div>
-		
     </div>
+	{% else %}
+	<div class="row">
+		<div class="alert alert-danger">
+			<strong>Error!</strong> The se_api_token has not been set. Until that is done, comments can not be manually added.
+		</div>
+	</div>
+	{% endif %}
 {% endblock %}
