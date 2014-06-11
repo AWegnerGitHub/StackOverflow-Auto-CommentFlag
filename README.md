@@ -27,9 +27,9 @@ The System has several dynamic settings. Using the Flask control panel, these ca
  - `classify_max_character_limit` - System will attempt to classify comments less than this character limit (used in combination with other `classify_*` settings).
  - `classify_max_score` - System will attempt to classify comments that have this score or less (used in combination with other `classify_*` settings).
  - `current_status` - The current status of the flagging application. This should *NOT* be adjusted manually.
- - `current_status_datetime` - The timestamp of when `current_status` changed. This should *NOT* be adjusted manually.
- - `current_status_last_run_datetime` - The last time the flagging application ran. This should *NOT* be adjusted manually.
- - `current_status_next_run_datetime` - The next scheduled run time of the flagging application. This should *NOT* be adjusted manually.
+ - `current_status_datetime` - The timestamp of when `current_status` changed. This should *NOT* be adjusted manually. Should be in UTC.
+ - `current_status_last_run_datetime` - The last time the flagging application ran. This should *NOT* be adjusted manually. Should be in UTC.
+ - `current_status_next_run_datetime` - The next scheduled run time of the flagging application. This should *NOT* be adjusted manually. Should be in UTC.
  - `flagging_enabled` - True/False value that will determine whether to flag comments on StackOverflow
  - `flagging_max_comments_retreive` - Maximium number of comments to retrieve per run. Default is 1000 and this equates to 10 pages at 100 comments per page (10 API calls).
  - `max_history_days` - Number of previous days to include when pulling data from database.
@@ -43,8 +43,12 @@ To Do:
  - Develop initial training algorithms
  - Send access token along with API calls
  - Develop background daemon that pulls comments on scheduled basis and puts them into table
+   - Comments should be pulled based on UTC: 
+   - Last run time should be based on UTC: `now = datetime.utcnow()`
+   - Timestamp: `ts = (now - datetime.datetime.utcfromtimestamp(0)).total_seconds()`
+   - URL Parameters: `fromdate` => `ts` of previous run time `todate` = `ts` of `utcnow`
  - Develop process that looks at new comments and classifies them
  - Develop process that flags appropriate comments
    - Should use `TrainingAlgorithm` and `TrainingResult` tables
  - Populate settings in populate db (with appropriate defaults)	
- 
+
