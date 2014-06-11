@@ -25,6 +25,7 @@ except ValueError:
     db.session.commit()
     
 API_TOKEN = Setting.by_name(db.session, 'se_api_token')
+API_KEY = Setting.by_name(db.session, 'se_api_key')
     
 
 @app.route('/')
@@ -99,8 +100,6 @@ def manual_data():
 
 @app.route('/settings')
 def settings():
-#    print Setting.by_name(db.session, 'se_api_token')
-#    print Setting.by_name(db.session, 'dont_exist')
     return render_template('settings.html',
                            settings=db.session.query(Setting).filter(Setting.user_manage == True).order_by(Setting.name.asc()).all(),
                            suppress_overview=True,
@@ -115,7 +114,8 @@ def add_settings():
 @app.route('/add_comments')
 def add_comments():
     token_set = True if API_TOKEN else False
-    return render_template('add_comment.html', suppress_overview=True, token_set=token_set, pagetitle="Add Comments")
+    key_set = True if API_KEY else False
+    return render_template('add_comment.html', suppress_overview=True, token_set=token_set & key_set, pagetitle="Add Comments")
 
     
 @app.route('/add_setting_data', methods=['POST'])
@@ -163,7 +163,7 @@ def add_comment_data():
 
         comment_dict = dict(zip(comments, comment_types_list))
         # THIS IS WHERE WE PULL COMMENTS FROM API
-        site = SEAPI("stackoverflow")
+        site = SEAPI("stackoverflow", key=API_KEY, access_token=API_TOKEN)
         comment_data = site.fetch('comments', ids=comments, filter='!1zSsiTKfrlw0eKYQiRXjG')
         for c in comment_data['items']:
             link = "http://stackoverflow.com/posts/comments/%s" % (c['comment_id'])
