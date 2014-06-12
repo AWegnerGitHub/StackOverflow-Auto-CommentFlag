@@ -1,11 +1,11 @@
 import logging
-import os
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-import models.base as base
-from models.secomments import Comment, CommentType
-from datetime import datetime
+import bz2
+import pickle
+
 
 post_type_dict = {
     "question": 1,
@@ -35,3 +35,11 @@ def connect_to_db(db_name):
     session.configure(bind=engine)
     logging.debug('Connection to database intialized; returning session.')
     return session()
+
+
+def get_naive_bayes_classifier(classifier_name):
+    logging.info("Opening classifier from {0}".format(classifier_name))
+    f = bz2.BZ2File(classifier_name, 'rb')
+    cl = pickle.load(f)
+    f.close()
+    return cl

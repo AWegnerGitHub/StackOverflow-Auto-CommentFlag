@@ -49,6 +49,13 @@ class CommentType(Base):
     def __repr__(self):
         return "<CommentType(id='%s', name='%s', is_active='%s')>" % (self.id, self.name, self.is_active)
 
+    @classmethod
+    def all_comment_types(cls, session):
+        types_dict = {}
+        for r in session.query(cls).filter_by(is_active=True).all():
+            types_dict[r.name] = r.__dict__
+        return types_dict
+
 
 class TrainingAlgorithm(Base):
     """This class defines our available algorithms"""
@@ -57,6 +64,17 @@ class TrainingAlgorithm(Base):
     name = Column(CoerceUTF8(50, convert_unicode=True), nullable=False)
     description = Column(CoerceUTF8(2000, convert_unicode=True), nullable=False)
     creation_date = Column(DateTime, nullable=False)
+    file_location = Column(CoerceUTF8(250, convert_unicode=True), nullable=True)
+
+    def __repr__(self):
+        return "<TrainingAlgorithm(id='%s', name='%s', file_location='%s')>" % (self.id, self.name, self.file_location)
+
+    @classmethod
+    def all_training_algorithms(cls, session):
+        training_dict = {}
+        for r in session.query(cls).all():
+            training_dict[r.name] = r.__dict__
+        return training_dict
 
 
 class TrainingResult(Base):
