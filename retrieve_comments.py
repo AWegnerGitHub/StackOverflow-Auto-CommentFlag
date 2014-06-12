@@ -37,9 +37,28 @@ def main():
     loop = 0
     while loop < 5:
         comments = retrieve_comments()
-        loop += 1
-        logging.debug("Sleeping for %s seconds" % (SLEEP_BETWEEN_RETRIEVE))
-        sleep(SLEEP_BETWEEN_RETRIEVE)
+        for c in comments['items']:
+            s.add(Comment(
+                link = "http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
+                text = BeautifulSoup(c['body']).get_text(),
+                id = c['comment_id'],
+                score = c['score'],
+                user_id = c['owner']['user_id'],
+                reputation = c['owner']['reputation'],
+                post_type = utils.post_type_dict[c['post_type']],
+                creation_date = datetime.fromtimestamp(c['creation_date']),
+                comment_type_id = 1,
+                system_add_date = datetime.utcnow()
+            ))
+            try:
+                s.commit()
+            except IntegrityError:              # Overlaps in time frames do occur, this prevents it from breaking the commit
+                                                # as the single record is skipped
+                logging.warning("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
+                s.rollback()
+            loop += 1
+            logging.debug("Sleeping for %s seconds" % (SLEEP_BETWEEN_RETRIEVE))
+            sleep(SLEEP_BETWEEN_RETRIEVE)
 
 
 def get_timestamps():
@@ -57,28 +76,6 @@ def retrieve_comments():
     Setting.update_value(s, 'current_status_datetime', datetime.utcnow())
     comments = SITE.fetch('comments', filter=COMMENT_FILTER, fromdate=previous, todate=now)
     logging.info("   %s comments retrieved" % (len(comments['items'])))
-
-    import pprint
-    for c in comments['items']:
-        s.add(Comment(
-            link = "http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
-            text = BeautifulSoup(c['body']).get_text(),
-            id = c['comment_id'],
-            score = c['score'],
-            user_id = c['owner']['user_id'],
-            reputation = c['owner']['reputation'],
-            post_type = utils.post_type_dict[c['post_type']],
-            creation_date = datetime.fromtimestamp(c['creation_date']),
-            comment_type_id = 1,
-            system_add_date = datetime.utcnow()
-        ))
-        try:
-            s.commit()
-        except IntegrityError:              # Overlaps in time frames do occur, this prevents it from breaking the commit
-                                            # as the single record is skipped
-            logging.warning("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
-            s.rollback()
-
 
 
     logging.debug("Remaining Quota updated to: %s" % (comments['quota_remaining']))
