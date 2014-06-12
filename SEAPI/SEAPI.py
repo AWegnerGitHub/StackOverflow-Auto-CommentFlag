@@ -42,9 +42,9 @@ class SEAPI(object):
 		if 'max_pages' in kwargs:
 			self.max_pages = kwargs['max_pages']
 		if 'key' in kwargs:
-            self.key = kwargs['key']
-        if 'access_token' in kwargs:
-            self.access_token = kwargs['access_token']
+			self.key = kwargs['key']
+		if 'access_token' in kwargs:
+			self.access_token = kwargs['access_token']
 		
 		self._base_url = 'https://api.stackexchange.com/%s/' % (version)
 		sites = self.fetch('sites', filter='!*L1*AY-85YllAr2)')
@@ -78,10 +78,10 @@ class SEAPI(object):
 			"filter": filter		
 		}
 
-        if self.key:
-            parms['key'] = self.key
-        if self.access_token:
-            parms['access_token'] = self.access_token
+		if self.key:
+			params['key'] = self.key
+		if self.access_token:
+			params['access_token'] = self.access_token
 			
 		if 'ids' in kwargs:
 			ids = ';'.join(str(x) for x in kwargs['ids'])
