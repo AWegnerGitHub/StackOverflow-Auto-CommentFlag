@@ -85,3 +85,8 @@ class Setting(Base):
     @classmethod
     def by_name(cls, session, name):
         return session.query(cls.value).filter(cls.name == name).scalar()
+
+    @classmethod
+    def update_value(cls, session, name, value):
+        session.query(cls).filter_by(name=name).update({"value":value})
+        session.commit()

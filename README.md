@@ -41,13 +41,8 @@ The System has several dynamic settings. Using the Flask control panel, these ca
 To Do:
 
  - Develop initial training algorithms
- - Send access token along with API calls
  - Develop background daemon that pulls comments on scheduled basis and puts them into table
-   - Comments should be pulled based on UTC: 
-   - Last run time should be based on UTC: `now = datetime.utcnow()`
-   - Timestamp: `ts = (now - datetime.datetime.utcfromtimestamp(0)).total_seconds()`
-   - URL Parameters: `fromdate` => `ts` of previous run time `todate` = `ts` of `utcnow`
- - Develop process that looks at new comments and classifies them
+   - Develop process that looks at new comments and classifies them
  - Develop process that flags appropriate comments
    - Should use `TrainingAlgorithm` and `TrainingResult` tables
  - Populate settings in populate db (with appropriate defaults)	

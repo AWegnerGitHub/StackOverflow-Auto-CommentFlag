@@ -36,14 +36,18 @@ class SEAPI(object):
 
         self.proxy = None
         self.max_pages = 100
+        self.page_size = 100
         self._endpoint = None
         self._api_key = None
         self._name = None
         self._version = version
+        self._previous_call = None
         if 'proxy' in kwargs:
             self.proxy = kwargs['proxy']
         if 'max_pages' in kwargs:
             self.max_pages = kwargs['max_pages']
+        if 'page_size' in kwargs:
+            self.page_size = kwargs['page_size']
         if 'key' in kwargs:
             self.key = kwargs['key']
         if 'access_token' in kwargs:
@@ -62,9 +66,9 @@ class SEAPI(object):
 
 
     def __repr__(self):
-        return "<%s> v:<%s> endpoint: %s" % (self._name, self._version, self._endpoint)
+        return "<%s> v:<%s> endpoint: %s  Last URL: %s" % (self._name, self._version, self._endpoint, self._previous_call)
 
-    def fetch(self, endpoint=None, pagesize=100, page=1, key=None, filter='default', **kwargs):
+    def fetch(self, endpoint=None, page=1, key=None, filter='default', **kwargs):
         """Build the API end point.
 		
 			If `kwargs` exist, we need to tack those on too
@@ -75,7 +79,7 @@ class SEAPI(object):
         self._endpoint = endpoint
 
         params = {
-            "pagesize": pagesize,
+            "pagesize": self.page_size,
             "page": page,
             "filter": filter
         }
@@ -107,6 +111,7 @@ class SEAPI(object):
                 base_url += "%s" % (ids)
 
             response = requests.get(base_url, params=params, proxies=self.proxy)
+            self._previous_call = response.url
             response = response.json()
             count = 0
 
@@ -114,7 +119,7 @@ class SEAPI(object):
                 error = response["error"]
                 code = error["Code"]
                 message = error["Message"]
-                raise SEAPIError(url, code, message)
+                raise SEAPIError(response.url, code, message)
             except KeyError:
                 pass  # This means there is no error
 
@@ -127,7 +132,7 @@ class SEAPI(object):
                 break
 
             backoff = 0
-            if 'has_more' in response and response['has_more'] == 'True':
+            if 'has_more' in response and response['has_more']:
                 params["page"] += 1
                 if 'backoff' in response:
                     backoff = response['backoff']
@@ -140,7 +145,7 @@ class SEAPI(object):
             r.extend(d['items'])
         result = {
             'backoff': backoff,
-            'has_most': data[-1]['has_more'],
+            'has_more': data[-1]['has_more'],
             'page': params['page'],
             'quota_max': data[-1]['quota_max'],
             'quota_remaining': data[-1]['quota_remaining'],
