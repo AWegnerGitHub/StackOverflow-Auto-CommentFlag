@@ -46,4 +46,5 @@ To Do:
  - Develop process that flags appropriate comments
    - Should use `TrainingAlgorithm` and `TrainingResult` tables
  - Populate settings in populate db (with appropriate defaults)	
+ - Need way to initialize classifer and use classifier on comments
 
