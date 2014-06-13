@@ -54,6 +54,8 @@ To Do:
  - Need thresholds for each classification
    - If classifier picks a type that is not "good comment", check the probability
    - If probability is >= the threshold for that option, flag. Otherwise, don't flag
+   - If `good comment` but below threshold, don't add to system. ONLY COMMENTS THAT ARE ABOVE THRESHOLD WILL BE ADDED
    - How to handle good? 
    - Thresholds need to be reviewed
+ - Settings need to refresh each run to ensure updates via the UI are handled without a restart
    
