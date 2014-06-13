@@ -18,8 +18,9 @@ except ImportError:
 class SEAPIError(Exception):
     """Raised if an API Error is encountered."""
 
-    def __init__(self, url, code, message):
+    def __init__(self, url, error, code, message):
         self.url = url
+        self.error = error
         self.code = code
         self.message = message
 
@@ -28,9 +29,9 @@ class SEAPI(object):
     """Provide a way to get data from SE Site."""
 
     def __init__(self, name=None, version="2.2", **kwargs):
-        """	`name` will be used to look up base URL of site we are querying.
-			`version` is the API version we are querying		
-		"""
+        """    `name` will be used to look up base URL of site we are querying.
+            `version` is the API version we are querying        
+        """
         if not name:
             raise ValueError('No Site Name provided')
 
@@ -70,9 +71,9 @@ class SEAPI(object):
 
     def fetch(self, endpoint=None, page=1, key=None, filter='default', **kwargs):
         """Build the API end point.
-		
-			If `kwargs` exist, we need to tack those on too
-		"""
+        
+            If `kwargs` exist, we need to tack those on too
+        """
         if not endpoint:
             raise ValueError('No end point provided.')
 
@@ -116,10 +117,10 @@ class SEAPI(object):
             count = 0
 
             try:
-                error = response["error"]
-                code = error["Code"]
-                message = error["Message"]
-                raise SEAPIError(response.url, code, message)
+                error = response["error_id"]
+                code = response["error_name"]
+                message = response["error_message"]
+                raise SEAPIError(self._previous_call, error, code, message)
             except KeyError:
                 pass  # This means there is no error
 

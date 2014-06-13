@@ -28,7 +28,7 @@ comment_types_dict = CommentType.all_comment_types(s)
 
 logging.info("Processing Classifier information: '%s' at %s" % (classifier_dict[CLASSIFIER_ALGORITHM]['name'],
                                                                 classifier_dict[CLASSIFIER_ALGORITHM]['file_location']))
-classifier = utils.get_naive_bayes_classifier(classifier_dict[CLASSIFIER_ALGORITHM]['file_location'])
+#classifier = utils.get_naive_bayes_classifier(classifier_dict[CLASSIFIER_ALGORITHM]['file_location'])
 
 
 def main(skip_comments=False):
@@ -44,34 +44,35 @@ def main(skip_comments=False):
     logging.debug("  CLASSIFIER: %s" % (classifier_dict[CLASSIFIER_ALGORITHM]['name']))
     logging.debug("  CLASSIFIER FILE: %s" % (classifier_dict[CLASSIFIER_ALGORITHM]['file_location']))
 
-    classifier.show_informative_features(30)
+#    classifier.show_informative_features(30)
 
     loop = 0
     if not skip_comments:
         while loop < 5:
             comments = retrieve_comments()
-            for c in comments['items']:
-                s.add(Comment(
-                    link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
-                    text=BeautifulSoup(c['body']).get_text(),
-                    id=c['comment_id'],
-                    score=c['score'],
-                    user_id=c['owner']['user_id'],
-                    reputation=c['owner']['reputation'],
-                    post_type=utils.post_type_dict[c['post_type']],
-                    creation_date=datetime.fromtimestamp(c['creation_date']),
-                    comment_type_id=1,
-                    system_add_date=datetime.utcnow()
-                ))
-                try:
-                    s.commit()
-                except IntegrityError:  # Overlaps in time frames do occur, this prevents it from breaking the commit
-                    # as the single record is skipped
-                    logging.warning("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
-                    s.rollback()
-                loop += 1
-                logging.debug("Sleeping for %s seconds" % (SLEEP_BETWEEN_RETRIEVE))
-                sleep(SLEEP_BETWEEN_RETRIEVE)
+            if comments:
+                for c in comments['items']:
+                    s.add(Comment(
+                        link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
+                        text=BeautifulSoup(c['body']).get_text(),
+                        id=c['comment_id'],
+                        score=c['score'],
+                        user_id=c['owner']['user_id'],
+                        reputation=c['owner']['reputation'],
+                        post_type=utils.post_type_dict[c['post_type']],
+                        creation_date=datetime.fromtimestamp(c['creation_date']),
+                        comment_type_id=1,
+                        system_add_date=datetime.utcnow()
+                    ))
+                    try:
+                        s.commit()
+                    except IntegrityError:  # Overlaps in time frames do occur, this prevents it from breaking the commit
+                        # as the single record is skipped
+                        logging.warning("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
+                        s.rollback()
+                    loop += 1
+                    logging.debug("Sleeping for %s seconds" % (SLEEP_BETWEEN_RETRIEVE))
+                    sleep(SLEEP_BETWEEN_RETRIEVE)
 
 
 def get_timestamps():
@@ -88,7 +89,22 @@ def retrieve_comments():
     logging.info("Retrieving comments created between %s and %s" % (previous_readable, now_readable))
     Setting.update_value(s, 'current_status', 'RETRIEVING COMMENTS')
     Setting.update_value(s, 'current_status_datetime', datetime.utcnow())
-    comments = SITE.fetch('comments', filter=COMMENT_FILTER, fromdate=previous, todate=now)
+    try:
+        #comments = SITE.fetch('comments', filter=COMMENT_FILTER, fromdate=previous, todate=now)
+        comments = SITE.fetch('errors', filter=COMMENT_FILTER, id=407)
+    except SEAPI.SEAPIError as e:
+        # WHAT TO DO HERE?
+        logging.critical("API Error occurred.")
+        import pprint
+        print "----------------"
+        pprint.pprint(e, indent=4)
+        print "----------------"
+        logging.critical("   Error URL: %s" % (e.url))
+        logging.critical("   Error Number: %s" % (e.error))
+        logging.critical("   Error Code: %s" % (e.code))
+        logging.critical("   Error Message: %s" % (e.message))
+        return 
+        
     logging.info("   %s comments retrieved" % (len(comments['items'])))
 
     logging.debug("Remaining Quota updated to: %s" % (comments['quota_remaining']))
@@ -100,4 +116,4 @@ def retrieve_comments():
 
 
 if __name__ == "__main__":
-    main(skip_comments=True)
+    main(skip_comments=False)

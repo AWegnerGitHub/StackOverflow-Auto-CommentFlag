@@ -47,4 +47,7 @@ To Do:
    - Should use `TrainingAlgorithm` and `TrainingResult` tables
  - Populate settings in populate db (with appropriate defaults)	
  - Need way to use classifier on comments
-
+ - Handle API errors and warnings
+   - No more comments
+   - Over quota
+   - Timeout
