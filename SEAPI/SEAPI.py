@@ -102,6 +102,7 @@ class SEAPI(object):
 
         data = []
         run_cnt = 0
+        backoff = 0
         while True:
             run_cnt += 1
             if run_cnt > self.max_pages:  # Prevents Infinate Loops
@@ -132,7 +133,6 @@ class SEAPI(object):
             if len(data) < 1:
                 break
 
-            backoff = 0
             if 'has_more' in response and response['has_more']:
                 params["page"] += 1
                 if 'backoff' in response:

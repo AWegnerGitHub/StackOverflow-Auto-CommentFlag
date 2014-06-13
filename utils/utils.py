@@ -15,16 +15,41 @@ post_type_dict = {
 
 def setup_logging(file_name, file_level=logging.INFO, console_level=logging.INFO, requests_level=logging.CRITICAL):
     logging.basicConfig(filename='logs/%s.log' % (file_name), level=file_level,
-                        format='%(asctime)s - %(levelname)-8s - %(name)-12s - %(message)s')
+                        format='%(asctime)s - %(levelname)-8s - %(name)-12s - %(message)s',
+                        encoding = "UTF-8")
     console_log = logging.StreamHandler()
     console_log.setLevel(console_level)
     formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
     console_log.setFormatter(formatter)
     logging.getLogger('').addHandler(console_log)
     requests_log = logging.getLogger('requests.packages.urllib3')
-    requests_log.setLevel(logging.CRITICAL)
+    requests_log.setLevel(requests_level)
     logging.debug("Logging initialized")
     return logging
+
+
+def setup_logging_2(file_name, file_level=logging.INFO, console_level=logging.INFO, requests_level=logging.CRITICAL):
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    # Create Console handler
+    console_log = logging.StreamHandler()
+    console_log.setLevel(console_level)
+    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+    console_log.setFormatter(formatter)
+    logger.addHandler(console_log)
+
+    # Log file
+    file_log = logging.FileHandler('logs/%s.log' % (file_name), 'a', encoding='UTF-8')
+    file_log.setLevel(file_level)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)-8s - %(name)-12s - %(message)s')
+    file_log.setFormatter(formatter)
+    logger.addHandler(file_log)
+
+    requests_log = logging.getLogger('requests.packages.urllib3')
+    requests_log.setLevel(requests_level)
+
+    return logger
 
 
 def connect_to_db(db_name):
@@ -38,7 +63,6 @@ def connect_to_db(db_name):
 
 
 def get_naive_bayes_classifier(classifier_name):
-    logging.info("Opening classifier from {0}".format(classifier_name))
     f = bz2.BZ2File(classifier_name, 'rb')
     cl = pickle.load(f)
     f.close()
