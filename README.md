@@ -51,3 +51,9 @@ To Do:
    - No more comments
    - Over quota
    - Timeout
+ - Need thresholds for each classification
+   - If classifier picks a type that is not "good comment", check the probability
+   - If probability is >= the threshold for that option, flag. Otherwise, don't flag
+   - How to handle good? 
+   - Thresholds need to be reviewed
+   
