@@ -29,6 +29,9 @@ SITE = SEAPI.SEAPI('stackoverflow', key=API_KEY, access_token=API_TOKEN)
 # Dictionaries we need
 classifier_dict = TrainingAlgorithm.all_training_algorithms(s)
 comment_types_dict = CommentType.all_comment_types(s)
+comment_types_dict['too chatty']['threshold'] = float(Setting.by_name(s, 'threshold_too_chatty'))
+comment_types_dict['good comment']['threshold'] = float(Setting.by_name(s, 'threshold_good_comment'))
+comment_types_dict['obsolete']['threshold'] = float(Setting.by_name(s, 'threshold_obsolete'))
 
 logging.info("Processing Classifier information: '%s' at %s" % (classifier_dict[CLASSIFIER_ALGORITHM]['name'],
                                                                 classifier_dict[CLASSIFIER_ALGORITHM]['file_location']))
@@ -52,42 +55,50 @@ def main(skip_comments=False,skip_db=False):
     if skip_comments:
         logging.debug("skip_comments set to True. Not retrieving comments.")
     else:
-        while loop < 5:
+        while True:
             comments = retrieve_comments()
             if comments:
                 for c in comments['items']:
                     comment_body = BeautifulSoup(c['body']).get_text()
                     prob_dist = classifier.prob_classify(comment_body)
-                    blob = TextBlob(comment_body, classifier=classifier)
+#                    blob = TextBlob(comment_body, classifier=classifier)
                     try:
-                        logging.debug("Classified: %s =>  BlobClass: %s  ProbClass: %s  ChatProb: %s  ObsolProb: %s  GoodProb: %s" %
-                                      (blob, blob.classify(), prob_dist.max(), prob_dist.prob('too chatty'),
-                                       prob_dist.prob('obsolete'), prob_dist.prob('good comment')
-                                      ))
+                        classified_as = prob_dist.max()
+                        logging.debug("Classified: %s => As: %s => Certainy: %s" % (comment_body, classified_as, prob_dist.prob(classified_as)))
+                        if (prob_dist.prob(classified_as) >= comment_types_dict[classified_as]['threshold']):
+                            if skip_db:
+        #                        logging.debug("skip_db set to True. Not committing comments to database.")
+                                pass
+                            else:
+                                logging.info("FLAGGABLE")
+                                s.add(Comment(
+                                    link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
+                                    text=comment_body,
+                                    id=c['comment_id'],
+                                    score=c['score'],
+                                    user_id=c['owner']['user_id'],
+                                    reputation=c['owner']['reputation'],
+                                    post_type=utils.post_type_dict[c['post_type']],
+                                    creation_date=datetime.fromtimestamp(c['creation_date']),
+                                    comment_type_id=comment_types_dict[classified_as]['id'],
+                                    system_add_date=datetime.utcnow()
+                                ))
+                                try:
+                                    s.commit()
+                                except IntegrityError:  # Overlaps in time frames do occur, this prevents it from breaking the commit
+                                    # as the single record is skipped
+                                    logging.info("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
+                                    s.rollback()
+
+                        else:
+                            logging.info("NOT FLAGGED")
+                        
+#                        logging.debug("Classified: %s =>  BlobClass: %s  ProbClass: %s  ChatProb: %s  ObsolProb: %s  GoodProb: %s" %
+#                                      (blob, blob.classify(), prob_dist.max(), prob_dist.prob('too chatty'),
+#                                       prob_dist.prob('obsolete'), prob_dist.prob('good comment')
+#                                      ))
                     except UnicodeDecodeError:
                         logging.debug("Couldn't print this one.")
-                    if skip_db:
-#                        logging.debug("skip_db set to True. Not committing comments to database.")
-                        pass
-                    else:
-                        s.add(Comment(
-                            link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
-                            text=comment_body,
-                            id=c['comment_id'],
-                            score=c['score'],
-                            user_id=c['owner']['user_id'],
-                            reputation=c['owner']['reputation'],
-                            post_type=utils.post_type_dict[c['post_type']],
-                            creation_date=datetime.fromtimestamp(c['creation_date']),
-                            comment_type_id=1,
-                            system_add_date=datetime.utcnow()
-                        ))
-                        try:
-                            s.commit()
-                        except IntegrityError:  # Overlaps in time frames do occur, this prevents it from breaking the commit
-                            # as the single record is skipped
-                            logging.info("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
-                            s.rollback()
                     loop += 1
                 logging.debug("Sleeping for %s seconds" % (SLEEP_BETWEEN_RETRIEVE))
                 sleep(SLEEP_BETWEEN_RETRIEVE)
@@ -110,7 +121,6 @@ def retrieve_comments():
     try:
         comments = SITE.fetch('comments', filter=COMMENT_FILTER, fromdate=previous, todate=now)
     except SEAPI.SEAPIError as e:
-        # WHAT TO DO HERE?
         logging.critical("API Error occurred.")
         import pprint
         print "----------------"
@@ -133,4 +143,4 @@ def retrieve_comments():
 
 
 if __name__ == "__main__":
-    main(skip_comments=False, skip_db=True)
+    main(skip_comments=False, skip_db=False)
