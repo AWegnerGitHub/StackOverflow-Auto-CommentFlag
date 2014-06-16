@@ -89,6 +89,85 @@
 					{ type: "text" }
                 ]
             });
+			
+			$('#comment_types_tbl').dataTable({
+                "aaSorting": [
+                    [ 0, "asc" ]
+                ],
+                "lengthMenu": [
+                    [50, 250, 500, 1000],
+                    [50, 250, 500, 1000]
+                ],
+                "iDisplayLength": 250,
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $('#comment_types_tbl a.treshold_value').editable({
+                        type: 'text',
+                        name: 'Threshold Value',
+                        title: 'Threshold Value',
+                        url: "{{ url_for('update_comment_threshold') }}",
+                        ajaxOptions: {
+                            type: 'post'
+                        },
+                        onblur: 'submit',
+                        send: 'always'
+                    });
+					
+					$('#comment_types_tbl a.enabled_value').editable({
+                        type: 'select',
+                        name: 'Flagging Enabled',
+                        title: 'Flagging Enabled',
+                        url: "{{ url_for('update_comment_flagging_enabled') }}",
+                        source: [
+                            {value: 1, text: 'True'},
+                            {value: 0, text: 'False'}
+                        ],
+                        ajaxOptions: {
+                            type: 'post'
+                        },
+                        onblur: 'submit',
+                        send: 'always'
+                    });
+                }
+            }).columnFilter({
+                sPlaceHolder: "head:after",
+                aoColumns: [
+                    { type: "text" },
+					{ type: "select", values: [ 'True', 'False' ]  },
+					{ type: "text" }
+                ]
+            });
+			
+			$('#algorithms_tbl').dataTable({
+                "aaSorting": [
+                    [ 0, "asc" ]
+                ],
+                "lengthMenu": [
+                    [50, 250, 500, 1000],
+                    [50, 250, 500, 1000]
+                ],
+                "iDisplayLength": 250,
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $('#algorithms_tbl a.setting_value').editable({
+                        type: 'text',
+                        name: 'File Location',
+                        title: 'File Location',
+                        url: "{{ url_for('update_training_file_location') }}",
+                        ajaxOptions: {
+                            type: 'post'
+                        },
+                        onblur: 'submit',
+                        send: 'always'
+                    });
+                }
+            }).columnFilter({
+                sPlaceHolder: "head:after",
+                aoColumns: [
+                    { type: "text" },
+					{ type: "text" },
+					null,
+					{ type: "text" }
+                ]
+            });
 
             $('#comment_tbl .editable').on('hidden', function (e, reason) {
                 if (reason === 'save' || reason === 'nochange') {
@@ -107,11 +186,7 @@
             $(".clickableRow").click(function () {
                 window.document.location = $(this).data('url');
             });
-
-
         });
-
-
 	</script>
 	{% block headscripts %}{% endblock %}
     <title>{% block pagetitle %}{% endblock %} | Learning System Control Panel</title>

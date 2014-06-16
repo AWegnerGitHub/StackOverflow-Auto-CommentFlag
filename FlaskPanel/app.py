@@ -102,8 +102,8 @@ def manual_data():
 def settings():
     return render_template('settings.html',
                            settings=db.session.query(Setting).filter(Setting.user_manage == True).order_by(Setting.name.asc()).all(),
-						   commenttypes=db.session.query(CommentType).filter(CommentType.is_active == True).order_by(CommentType.name.asc()).all(),
-						   algorithms=db.session.query(TrainingAlgorithm).order_by(TrainingAlgorithm.name.asc()).all(),
+                           commenttypes=db.session.query(CommentType).filter(CommentType.is_active == True).order_by(CommentType.name.asc()).all(),
+                           algorithms=db.session.query(TrainingAlgorithm).order_by(TrainingAlgorithm.name.asc()).all(),
                            suppress_overview=True,
                            pagetitle="Settings")
                            
@@ -178,28 +178,6 @@ def add_comment_data():
             creation_date = datetime.fromtimestamp(c['creation_date'])  
             comment_type_id = comment_dict[unicode(c['comment_id'])]
 
-            # print "-" * 15
-            # print """
-            # Link => %s
-            # Text => %s
-            # ID => %s
-            # Score => %s
-            # User => %s
-            # Rep => %s
-            # Post Type => %s
-            # Creation Date => %s
-            # Comment Type => %s
-            # """ % (
-            # link,
-            # text,
-            # id,
-            # score,
-            # user_id,
-            # reputation,
-            # post_type,
-            # creation_date,
-            # comment_type_id,
-            # )
             db.session.add(Comment(link=link, text=text, id=id, score=score, user_id=user_id, reputation=reputation,
                                    post_type=post_type, creation_date=creation_date, comment_type_id=comment_type_id,
                                    added_manually=True, system_add_date=datetime.utcnow()))
@@ -234,6 +212,66 @@ def update_setting():
         response['msg'] = "Updated Setting ID: %s to: %s" % (pk, val)
     return jsonify(**response)    
         
+
+@app.route('/update_comment_flagging_enabled', methods=['POST'])    
+def update_comment_flagging_enabled():
+    pk = request.form.get('pk', -1)
+    val = request.form.get('value', -1)
+    
+    response = {
+        'success': False,
+        'msg': 'Unknown Error'
+    }
+    
+    if not val:
+        response['msg'] = "Empty Value inserted. Not allowed."
+    else:
+        db.session.query(CommentType).filter_by(id=pk).update(dict(is_flagging_enabled=val))
+        db.session.commit()
+        response['success'] = True
+        response['msg'] = "Updated Setting ID: %s to: %s" % (pk, val)
+    return jsonify(**response)  
+    
+
+@app.route('/update_training_file_location', methods=['POST'])    
+def update_training_file_location():
+    pk = request.form.get('pk', -1)
+    val = request.form.get('value', -1)
+    
+    response = {
+        'success': False,
+        'msg': 'Unknown Error'
+    }
+    
+    if not val:
+        response['msg'] = "Empty Value inserted. Not allowed."
+    else:
+        db.session.query(TrainingAlgorithm).filter_by(id=pk).update(dict(file_location=val))
+        db.session.commit()
+        response['success'] = True
+        response['msg'] = "Updated Setting ID: %s to: %s" % (pk, val)
+    return jsonify(**response)  
+    
+    
+@app.route('/update_comment_threshold', methods=['POST'])    
+def update_comment_threshold():
+    pk = request.form.get('pk', -1)
+    val = request.form.get('value', -1)
+    
+    response = {
+        'success': False,
+        'msg': 'Unknown Error'
+    }
+    
+    if not val:
+        response['msg'] = "Empty Value inserted. Not allowed."
+    else:
+        db.session.query(CommentType).filter_by(id=pk).update(dict(flagging_threshold=val))
+        db.session.commit()
+        response['success'] = True
+        response['msg'] = "Updated Setting ID: %s to: %s" % (pk, val)
+    return jsonify(**response)  
+    
     
 @app.route('/update_comment', methods=['POST'])
 def update_comment():

@@ -41,8 +41,8 @@
 						  {% for c in commenttypes %}
 							<tr>
 								<td>{{ c.name }}</td>
-								<td>{{ c.is_flagging_enabled }}</td>
-								<td><a href="#" class="setting_value" data-pk="{{ c.id }}" data-type="text" data-value="{{ c.flagging_threshold }}">{{ c.flagging_threshold }}</a></td>
+								<td><a href="#" class="enabled_value" data-pk="{{ c.id }}" data-type="select" data-value="{{ c.is_flagging_enabled }}">{{ c.is_flagging_enabled }}</a></td>
+								<td><a href="#" class="treshold_value" data-pk="{{ c.id }}" data-type="text" data-value="{{ c.flagging_threshold }}">{{ c.flagging_threshold }}</a></td>
 							</tr>
 						  {% endfor %}
 						</tbody>
