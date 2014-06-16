@@ -267,7 +267,7 @@ def populate_header_counts():
         Comment.added_manually == True
         ).count()
     resp_dict['comments_manual_add_yesterday'] = db.session.query(Comment).filter(
-        Comment.system_add_date == date.today() - timedelta(days=1),
+        Comment.system_add_date >= date.today() - timedelta(days=1),
         Comment.added_manually == True
         ).count()
     resp_dict['comments_manual_add_this_week'] = db.session.query(Comment).filter(
@@ -280,7 +280,7 @@ def populate_header_counts():
         Comment.added_manually == False
         ).count()
     resp_dict['comments_auto_add_yesterday'] = db.session.query(Comment).filter(
-        Comment.system_add_date == date.today() - timedelta(days=1),
+        Comment.system_add_date >= date.today() - timedelta(days=1),
         Comment.added_manually == False
         ).count()
     resp_dict['comments_auto_add_this_week'] = db.session.query(Comment).filter(
@@ -295,7 +295,7 @@ def populate_header_counts():
         Comment.added_manually == False
         ).count()
     resp_dict['comments_flag_yesterday'] = db.session.query(Comment).filter(
-        Comment.system_add_date == date.today() - timedelta(days=1),
+        Comment.system_add_date >= date.today() - timedelta(days=1),
         Comment.comment_type_id != 1,
         Comment.is_training == False,
         Comment.added_manually == False
