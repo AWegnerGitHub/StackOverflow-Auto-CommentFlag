@@ -55,7 +55,8 @@ def main(skip_comments=False,skip_db=False):
     if skip_comments:
         logging.debug("skip_comments set to True. Not retrieving comments.")
     else:
-        while True:
+        loop = 0
+        while loop < 30:
             comments = retrieve_comments()
             if comments:
                 for c in comments['items']:
@@ -64,13 +65,12 @@ def main(skip_comments=False,skip_db=False):
 #                    blob = TextBlob(comment_body, classifier=classifier)
                     try:
                         classified_as = prob_dist.max()
-                        logging.debug("Classified: %s => As: %s => Certainy: %s" % (comment_body, classified_as, prob_dist.prob(classified_as)))
                         if (prob_dist.prob(classified_as) >= comment_types_dict[classified_as]['threshold']):
                             if skip_db:
         #                        logging.debug("skip_db set to True. Not committing comments to database.")
                                 pass
                             else:
-                                logging.info("FLAGGABLE")
+                                logging.debug("FLAGGED Classified: %s => As: %s => Certainy: %s" % (comment_body, classified_as, prob_dist.prob(classified_as)))
                                 s.add(Comment(
                                     link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
                                     text=comment_body,
@@ -91,17 +91,15 @@ def main(skip_comments=False,skip_db=False):
                                     s.rollback()
 
                         else:
-                            logging.info("NOT FLAGGED")
-                        
-#                        logging.debug("Classified: %s =>  BlobClass: %s  ProbClass: %s  ChatProb: %s  ObsolProb: %s  GoodProb: %s" %
-#                                      (blob, blob.classify(), prob_dist.max(), prob_dist.prob('too chatty'),
-#                                       prob_dist.prob('obsolete'), prob_dist.prob('good comment')
-#                                      ))
+                            logging.debug("NOT FLAGGED Classified: %s =>  ProbClass: %s  ChatProb: %s  ObsolProb: %s  GoodProb: %s" %
+                                      (comment_body, prob_dist.max(), prob_dist.prob('too chatty'),
+                                       prob_dist.prob('obsolete'), prob_dist.prob('good comment')
+                                      ))
                     except UnicodeDecodeError:
                         logging.debug("Couldn't print this one.")
-                    loop += 1
-                logging.debug("Sleeping for %s seconds" % (SLEEP_BETWEEN_RETRIEVE))
-                sleep(SLEEP_BETWEEN_RETRIEVE)
+            loop += 1
+            logging.debug("Sleeping for %s seconds" % (SLEEP_BETWEEN_RETRIEVE))
+            sleep(SLEEP_BETWEEN_RETRIEVE)
 
 
 def get_timestamps():
