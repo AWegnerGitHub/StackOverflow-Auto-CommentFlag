@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, BigInteger, Enum, Boolean, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, BigInteger, Enum, Boolean, DateTime, Float
 from sqlalchemy.types import TypeDecorator, Unicode
 from sqlalchemy.orm import relationship, backref
 
@@ -45,6 +45,8 @@ class CommentType(Base):
     id = Column(Integer, primary_key=True, unique=True)
     name = Column(CoerceUTF8(50, convert_unicode=True), nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
+    is_flagging_enabled = Column(Boolean, nullable=False, default=False)
+    flagging_threshold = Column(Float, nullable=False, default=1.0)
     
     def __repr__(self):
         return "<CommentType(id='%s', name='%s', is_active='%s')>" % (self.id, self.name, self.is_active)

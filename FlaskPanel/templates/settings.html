@@ -4,22 +4,73 @@
 {% block commenttable %}
     <div class="row">
         <div class="col-sm-12">
-            <table id="settings_tbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  {% for c in settings %}
-                    <tr>
-                        <td>{{ c.name }}</td>
-						<td><a href="#" class="setting_value" data-pk="{{ c.name }}" data-type="text" data-value="{{ c.value }}">{{ c.value }}</a></td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-            </table>
+			<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+				<li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
+				<li><a href="#commenttypes" data-toggle="tab">Comment Types</a></li>
+				<li><a href="#algorithms" data-toggle="tab">Algorithms</a></li>
+			</ul>
+			<div class="tab-content" id="settings_tabs_content">
+				<div class="tab-pane active" id="settings">
+					<table id="settings_tbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody>
+						  {% for c in settings %}
+							<tr>
+								<td>{{ c.name }}</td>
+								<td><a href="#" class="setting_value" data-pk="{{ c.name }}" data-type="text" data-value="{{ c.value }}">{{ c.value }}</a></td>
+							</tr>
+						  {% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<div class="tab-pane" id="commenttypes">
+					<table id="comment_types_tbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Flagging Enabled</th>
+								<th>Flagging Threshold</th>
+							</tr>
+						</thead>
+						<tbody>
+						  {% for c in commenttypes %}
+							<tr>
+								<td>{{ c.name }}</td>
+								<td>{{ c.is_flagging_enabled }}</td>
+								<td><a href="#" class="setting_value" data-pk="{{ c.id }}" data-type="text" data-value="{{ c.flagging_threshold }}">{{ c.flagging_threshold }}</a></td>
+							</tr>
+						  {% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<div class="tab-pane" id="algorithms">
+					<table id="algorithms_tbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+								<th>Creation Date</th>
+								<th>Training File Location</th>
+							</tr>
+						</thead>
+						<tbody>
+						  {% for c in algorithms %}
+							<tr>
+								<td>{{ c.name }}</td>
+								<td>{{ c.description }}</td>
+								<td>{{ c.creation_date }}</td>
+								<td><a href="#" class="setting_value" data-pk="{{ c.id }}" data-type="text" data-value="{{ c.file_location }}">{{ c.file_location }}</a></td>
+							</tr>
+						  {% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
         </div>
     </div>
 {% endblock %}

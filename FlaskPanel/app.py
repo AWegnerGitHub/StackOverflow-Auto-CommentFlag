@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func
-from models.secomments import Comment, CommentType, Setting
+from models.secomments import Comment, CommentType, Setting, TrainingAlgorithm
 from SEAPI.SEAPI import SEAPI, SEAPIError
 from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
@@ -102,6 +102,8 @@ def manual_data():
 def settings():
     return render_template('settings.html',
                            settings=db.session.query(Setting).filter(Setting.user_manage == True).order_by(Setting.name.asc()).all(),
+						   commenttypes=db.session.query(CommentType).filter(CommentType.is_active == True).order_by(CommentType.name.asc()).all(),
+						   algorithms=db.session.query(TrainingAlgorithm).order_by(TrainingAlgorithm.name.asc()).all(),
                            suppress_overview=True,
                            pagetitle="Settings")
                            
