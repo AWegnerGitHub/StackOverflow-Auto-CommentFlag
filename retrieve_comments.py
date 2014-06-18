@@ -61,38 +61,38 @@ def main(skip_comments=False):
                 for c in comments['items']:
                     comment_body = BeautifulSoup(c['body']).get_text()
                     prob_dist = classifier.prob_classify(comment_body)
-#                    blob = TextBlob(comment_body, classifier=classifier)
                     try:
                         classified_as = prob_dist.max()
                         if (prob_dist.prob(classified_as) >= comment_types_dict[classified_as]['flagging_threshold']):
-                            # THIS NEXT CHECK SHOULD ONLY OCCUR AT FLAGGING TIME, NOT WHEN ADDING TO DB
-                            if comment_types_dict[classified_as]['is_flagging_enabled']:
-                                logging.debug("FLAGGED Classified: %s => As: %s => Certainy: %s" % (comment_body, classified_as, prob_dist.prob(classified_as)))
-                                s.add(Comment(
-                                    link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
-                                    text=comment_body,
-                                    id=c['comment_id'],
-                                    score=c['score'],
-                                    user_id=c['owner']['user_id'],
-                                    reputation=c['owner']['reputation'],
-                                    post_type=utils.post_type_dict[c['post_type']],
-                                    creation_date=datetime.fromtimestamp(c['creation_date']),
-                                    comment_type_id=comment_types_dict[classified_as]['id'],
-                                    system_add_date=datetime.utcnow()
-                                ))
-                                try:
-                                    s.commit()
-                                except IntegrityError:  # Overlaps in time frames do occur, this prevents it from breaking the commit
-                                    # as the single record is skipped
-                                    logging.info("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
-                                    s.rollback()
-                            else:
-                                logging.debug("Flagging disabled for %s" % (classified_as))
+                            logging.debug("Classified: %s => As: %s => Certainy: %s => Flagged: [True]" % (comment_body, classified_as, prob_dist.prob(classified_as)))
+                            s.add(Comment(
+                                link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
+                                text=comment_body,
+                                id=c['comment_id'],
+                                score=c['score'],
+                                user_id=c['owner']['user_id'],
+                                reputation=c['owner']['reputation'],
+                                post_type=utils.post_type_dict[c['post_type']],
+                                creation_date=datetime.fromtimestamp(c['creation_date']),
+                                comment_type_id=comment_types_dict[classified_as]['id'],
+                                system_add_date=datetime.utcnow()
+                            ))
+                            try:
+                                s.commit()
+                            except IntegrityError:  # Overlaps in time frames do occur, this prevents it from breaking the commit
+                                # as the single record is skipped
+                                logging.info("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
+                                s.rollback()
+                            
+                            if bool(comment_types_dict[classified_as]['is_flagging_enabled']):
+                                # flag this comment function via API
+                                pass
                         else:
-                            logging.debug("NOT FLAGGED Classified: %s =>  ProbClass: %s  ChatProb: %s  ObsolProb: %s  GoodProb: %s" %
+                            logging.debug("Classified: %s =>  As: %s => ChattyProb: %s  ObsolProb: %s  GoodProb: %s => Flagged: [False]" %
                                       (comment_body, prob_dist.max(), prob_dist.prob('too chatty'),
                                        prob_dist.prob('obsolete'), prob_dist.prob('good comment')
                                       ))
+                        
                     except UnicodeDecodeError:
                         logging.debug("Couldn't print this one.")
             loop += 1
