@@ -29,16 +29,13 @@ SITE = SEAPI.SEAPI('stackoverflow', key=API_KEY, access_token=API_TOKEN)
 # Dictionaries we need
 classifier_dict = TrainingAlgorithm.all_training_algorithms(s)
 comment_types_dict = CommentType.all_comment_types(s)
-comment_types_dict['too chatty']['threshold'] = float(Setting.by_name(s, 'threshold_too_chatty'))
-comment_types_dict['good comment']['threshold'] = float(Setting.by_name(s, 'threshold_good_comment'))
-comment_types_dict['obsolete']['threshold'] = float(Setting.by_name(s, 'threshold_obsolete'))
 
 logging.info("Processing Classifier information: '%s' at %s" % (classifier_dict[CLASSIFIER_ALGORITHM]['name'],
                                                                 classifier_dict[CLASSIFIER_ALGORITHM]['file_location']))
 classifier = utils.get_naive_bayes_classifier(classifier_dict[CLASSIFIER_ALGORITHM]['file_location'])
 
 
-def main(skip_comments=False,skip_db=False):
+def main(skip_comments=False):
     logging.debug("Settings (upon entering main loop):")
     logging.debug("  API_TOKEN: %s" % (API_TOKEN))
     logging.debug("  API_KEY: %s" % (API_KEY))
@@ -48,6 +45,8 @@ def main(skip_comments=False,skip_db=False):
 
     SITE.max_pages = 1 if floor(MAX_COMMENTS_RETRIEVE / SITE.page_size) == 0 else floor(MAX_COMMENTS_RETRIEVE / SITE.page_size)
     logging.debug("  MAX PAGES: %s" % (SITE.max_pages))
+    SITE.page_size = MAX_COMMENTS_RETRIEVE if MAX_COMMENTS_RETRIEVE <= 100 else 100
+    logging.debug("  PAGE SIZE: %s" % (SITE.page_size))
     logging.debug("  CLASSIFIER: %s" % (classifier_dict[CLASSIFIER_ALGORITHM]['name']))
     logging.debug("  CLASSIFIER FILE: %s" % (classifier_dict[CLASSIFIER_ALGORITHM]['file_location']))
 
@@ -65,11 +64,9 @@ def main(skip_comments=False,skip_db=False):
 #                    blob = TextBlob(comment_body, classifier=classifier)
                     try:
                         classified_as = prob_dist.max()
-                        if (prob_dist.prob(classified_as) >= comment_types_dict[classified_as]['threshold']):
-                            if skip_db:
-        #                        logging.debug("skip_db set to True. Not committing comments to database.")
-                                pass
-                            else:
+                        if (prob_dist.prob(classified_as) >= comment_types_dict[classified_as]['flagging_threshold']):
+                            # THIS NEXT CHECK SHOULD ONLY OCCUR AT FLAGGING TIME, NOT WHEN ADDING TO DB
+                            if comment_types_dict[classified_as]['is_flagging_enabled']:
                                 logging.debug("FLAGGED Classified: %s => As: %s => Certainy: %s" % (comment_body, classified_as, prob_dist.prob(classified_as)))
                                 s.add(Comment(
                                     link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
@@ -89,7 +86,8 @@ def main(skip_comments=False,skip_db=False):
                                     # as the single record is skipped
                                     logging.info("Duplicate comment skipped database insertion.  ID: %s" % (c['comment_id']))
                                     s.rollback()
-
+                            else:
+                                logging.debug("Flagging disabled for %s" % (classified_as))
                         else:
                             logging.debug("NOT FLAGGED Classified: %s =>  ProbClass: %s  ChatProb: %s  ObsolProb: %s  GoodProb: %s" %
                                       (comment_body, prob_dist.max(), prob_dist.prob('too chatty'),
@@ -141,4 +139,4 @@ def retrieve_comments():
 
 
 if __name__ == "__main__":
-    main(skip_comments=False, skip_db=False)
+    main(skip_comments=False)

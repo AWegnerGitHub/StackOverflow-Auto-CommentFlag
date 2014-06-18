@@ -60,3 +60,4 @@ To Do:
  - Settings need to refresh each run to ensure updates via the UI are handled without a restart
  - Add setting for each type on whether or not to flag if threshold met (ie. if 'too chatty' and set to not flag, anything classified as too chatty won't get a flag; Set 'good comment' as not flag) 
  - Pull settings from CommentType table not settings
+ - Remove old threshold settings from `settings` table
