@@ -46,18 +46,12 @@ To Do:
  - Develop process that flags appropriate comments
    - Should use `TrainingAlgorithm` and `TrainingResult` tables
  - Populate settings in populate db (with appropriate defaults)	
- - Need way to use classifier on comments
  - Handle API errors and warnings
    - No more comments
    - Over quota
    - Timeout
  - Need thresholds for each classification
-   - If classifier picks a type that is not "good comment", check the probability
    - If probability is >= the threshold for that option, flag. Otherwise, don't flag
-   - If `good comment` but below threshold, don't add to system. ONLY COMMENTS THAT ARE ABOVE THRESHOLD WILL BE ADDED
-   - How to handle good? 
    - Thresholds need to be reviewed
  - Settings need to refresh each run to ensure updates via the UI are handled without a restart
- - Add setting for each type on whether or not to flag if threshold met (ie. if 'too chatty' and set to not flag, anything classified as too chatty won't get a flag; Set 'good comment' as not flag) 
- - Pull settings from CommentType table not settings
- - Remove old threshold settings from `settings` table
+ - Change `while loop < 30` in `retrieve_comments`
