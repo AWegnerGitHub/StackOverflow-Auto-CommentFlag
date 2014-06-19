@@ -350,7 +350,7 @@ def populate_header_counts():
     resp_dict['current_status_date'] = Setting.by_name(db.session, 'current_status_datetime')
     resp_dict['quota_remaining'] = Setting.by_name(db.session, 'se_api_remaining_quota')
     resp_dict['flagging_enabled'] = Setting.by_name(db.session, 'flagging_enabled')
-    time_to_midnight = (datetime.replace(datetime.utcnow() + timedelta(days=1), hour=0, minute=0, second=0) - datetime.utcnow())
+    time_to_midnight = (datetime.replace(datetime.utcnow() + timedelta(days=1), hour=0, minute=10, second=0) - datetime.utcnow())
     hours, remainder = divmod(time_to_midnight.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
     resp_dict['time_to_new_day'] = "%s hours, %s minutes" % (int(hours), int(minutes))
