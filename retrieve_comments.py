@@ -63,8 +63,8 @@ def main(skip_comments=False):
                     prob_dist = classifier.prob_classify(comment_body)
                     try:
                         classified_as = prob_dist.max()
-                        if (prob_dist.prob(classified_as) >= comment_types_dict[classified_as]['flagging_threshold']):
-                            logging.debug("Classified: %s => As: %s => Certainy: %s => Flagged: [True]" % (comment_body, classified_as, prob_dist.prob(classified_as)))
+                        if prob_dist.prob(classified_as) >= comment_types_dict[classified_as]['flagging_threshold']:
+                            logging.debug("Classified: %s => As: %s => Certainty: %s => Flagged: [True]" % (comment_body, classified_as, prob_dist.prob(classified_as)))
                             s.add(Comment(
                                 link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
                                 text=comment_body,
