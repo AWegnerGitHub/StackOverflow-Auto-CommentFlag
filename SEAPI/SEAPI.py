@@ -1,8 +1,5 @@
-import gzip
-import time
 import requests
 from itertools import chain
-import pprint
 
 try:
     import json
@@ -65,12 +62,11 @@ class SEAPI(object):
         if not self._name:
             raise ValueError('Invalid Site Name provided')
 
-
     def __repr__(self):
         return "<%s> v:<%s> endpoint: %s  Last URL: %s" % (self._name, self._version, self._endpoint, self._previous_call)
 
     def fetch(self, endpoint=None, page=1, key=None, filter='default', **kwargs):
-        """Build the API end point.
+        """Build the API end point and retrieve data.
         
             If `kwargs` exist, we need to tack those on too
         """
@@ -115,7 +111,6 @@ class SEAPI(object):
             response = requests.get(base_url, params=params, proxies=self.proxy)
             self._previous_call = response.url
             response = response.json()
-            count = 0
 
             try:
                 error = response["error_id"]
@@ -144,15 +139,69 @@ class SEAPI(object):
         r = []
         for d in data:
             r.extend(d['items'])
-        result = {
-            'backoff': backoff,
-            'has_more': data[-1]['has_more'],
-            'page': params['page'],
-            'quota_max': data[-1]['quota_max'],
-            'quota_remaining': data[-1]['quota_remaining'],
-            'items': None,
-        }
+        result = {'backoff': backoff,
+                  'has_more': data[-1]['has_more'],
+                  'page': params['page'],
+                  'quota_max': data[-1]['quota_max'],
+                  'quota_remaining': data[-1]['quota_remaining'],
+                  'items': list(chain(r))}
 
-        result['items'] = list(chain(r))
         return result
 
+    def send_data(self, endpoint=None, page=1, key=None, filter='default', **kwargs):
+        """Sends data over to Stack Exchange Site
+
+            If `kwargs` exist, we need to tack those on too
+        """
+        if not endpoint:
+            raise ValueError('No end point provided.')
+
+        self._endpoint = endpoint
+
+        params = {
+            "pagesize": self.page_size,
+            "page": page,
+            "filter": filter
+        }
+
+        if self.key:
+            params['key'] = self.key
+        if self.access_token:
+            params['access_token'] = self.access_token
+
+        if 'ids' in kwargs:
+            ids = ';'.join(str(x) for x in kwargs['ids'])
+            kwargs.pop('ids', None)
+        else:
+            ids = None
+
+        params.update(kwargs)
+        if self._api_key:
+            params['site'] = self._api_key
+
+        data = []
+
+        base_url = "%s%s/" % (self._base_url, endpoint)
+        response = requests.post(base_url, data=params, proxies=self.proxy)
+        self._previous_call = response.url
+        response = response.json()
+
+        try:
+            error = response["error_id"]
+            code = response["error_name"]
+            message = response["error_message"]
+            raise SEAPIError(self._previous_call, error, code, message)
+        except KeyError:
+            pass  # This means there is no error
+
+        data.append(response)
+        r = []
+        for d in data:
+            r.extend(d['items'])
+        result = {'has_more': data[-1]['has_more'],
+                  'page': params['page'],
+                  'quota_max': data[-1]['quota_max'],
+                  'quota_remaining': data[-1]['quota_remaining'],
+                  'items': list(chain(r))}
+
+        return result
