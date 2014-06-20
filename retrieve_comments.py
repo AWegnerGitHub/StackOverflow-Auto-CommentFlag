@@ -47,8 +47,7 @@ def main(skip_comments=False):
 
 def flagging_loop():
     global SETTINGS
-    loop = 0
-    while loop < 30:
+    while True:
         daily_flag_limit_exceeded = False
         # Recheck settings, to ensure something important didn't change while we slept
         SETTINGS = gather_settings()
@@ -97,7 +96,7 @@ def flagging_loop():
 
                 except UnicodeDecodeError:
                     logging.debug("Couldn't print this one.")
-        loop += 1
+
         if not daily_flag_limit_exceeded:
             logging.debug("Sleeping for %s seconds" % (SETTINGS['SLEEP_BETWEEN_RETRIEVE']))
             sleep(SETTINGS['SLEEP_BETWEEN_RETRIEVE'])
