@@ -367,7 +367,7 @@ def friendly_time(dt, past_="ago", future_="from now", default="just now"):
     Returns string representing "time since" or "time until" e.g. 3 days ago, 5 hours from now etc.
     """
 
-    now = datetime.now()
+    now = datetime.utcnow()
     if now > dt:
         diff = now - dt
         dt_is_past = True
