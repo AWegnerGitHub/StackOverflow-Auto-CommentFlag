@@ -79,19 +79,6 @@ class TrainingAlgorithm(Base):
         return training_dict
 
 
-class TrainingResult(Base):
-    """This class defines the results of our algorithms"""
-    __tablename__ = 'trainingresults'
-    comment_id = Column(Integer, ForeignKey('comments.id'), primary_key=True, unique=True)
-    comment = relationship('Comment', backref='trainingresults')
-    comment_type_id = Column(Integer, ForeignKey('commenttypes.id'), primary_key=True, unique=True)
-    comment_type = relationship('CommentType', backref='trainingresults')
-    algorithm_id = Column(Integer, ForeignKey('trainingalgorithms.id'), primary_key=True, unique=True)
-    algorithm = relationship('TrainingAlgorithm', backref='trainingresults')
-    classification_date = Column(DateTime, nullable=False, default=datetime.datetime.now())
-    is_correct_classification = Column(Boolean)
-
-
 class Setting(Base):
     """This class defines settings that our application uses"""
     __tablename__ = 'settings'

@@ -24,18 +24,18 @@ Settings:
 
 The System has several dynamic settings. Using the Flask control panel, these can be adjusted.
 
- - `classify_max_character_limit` - System will attempt to classify comments less than this character limit (used in combination with other `classify_*` settings).
- - `classify_max_score` - System will attempt to classify comments that have this score or less (used in combination with other `classify_*` settings).
+ - `classifier_algorithm` - Setting value that corresponds to which `TrainingAlgorithm` to utilize.
  - `current_status` - The current status of the flagging application. This should *NOT* be adjusted manually.
  - `current_status_datetime` - The timestamp of when `current_status` changed. This should *NOT* be adjusted manually. Should be in UTC.
  - `current_status_last_run_datetime` - The last time the flagging application ran. This should *NOT* be adjusted manually. Should be in UTC.
- - `current_status_next_run_datetime` - The next scheduled run time of the flagging application. This should *NOT* be adjusted manually. Should be in UTC.
  - `flagging_enabled` - True/False value that will determine whether to flag comments on StackOverflow
  - `flagging_max_comments_retreive` - Maximium number of comments to retrieve per run. Default is 1000 and this equates to 10 pages at 100 comments per page (10 API calls).
  - `max_history_days` - Number of previous days to include when pulling data from database.
- - `min_sleep_between_comment_fetch` - Time between comment retreivals. The system may scale this time, but it will never drop below this limit.
+ - `min_sleep_between_comment_fetch` - Time between comment retrievals. The system may scale this time, but it will never drop below this limit.
  - `min_sleep_between_flags` - Time between issuing a flag. The system may scale this time, but it will never drop below this limit.
- - `se_api_remaining_quota` - Number of calls to the API remaining. If this reaches zero, the system will stop retreiving comments until the next UTC day. This should *NOT* be adjusted manually.
+ - `se_api_comment_filter` - Filter to use when getting comments.
+ - `se_api_key` - StackOverflow API key that is associated with all requests sent.
+ - `se_api_remaining_quota` - Number of calls to the API remaining. If this reaches zero, the system will stop retrieving comments until the next UTC day. This should *NOT* be adjusted manually.
  - `se_api_token` - StackOverflow access token used when making API calls.
  
 To Do:
@@ -43,15 +43,7 @@ To Do:
  - Develop initial training algorithms
  - Develop background daemon that pulls comments on scheduled basis and puts them into table
    - Develop process that looks at new comments and classifies them
- - Develop process that flags appropriate comments
-   - Should use `TrainingAlgorithm` and `TrainingResult` tables
  - Populate settings in populate db (with appropriate defaults)	
- - Handle API errors and warnings
-   - No more comments
-   - Over quota
-   - Timeout
  - Need thresholds for each classification
    - If probability is >= the threshold for that option, flag. Otherwise, don't flag
    - Thresholds need to be reviewed
- - Settings need to refresh each run to ensure updates via the UI are handled without a restart
- - Change `while loop < 30` in `retrieve_comments`
