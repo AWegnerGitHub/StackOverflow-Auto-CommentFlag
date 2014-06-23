@@ -14,13 +14,16 @@ import datetime
 import models.base as base
 from models.secomments import Comment, CommentType
 
-TRAIN = False
+THRESHOLD = 700
 CLASSIFIER_NAME = "naivebayesv2.pickle.bz2"
+TRAIN = False
+TRAINING_RATIO = 0.75
 
 LOGLEVEL_FILE = logging.INFO
 LOGLEVEL_CONSOLE = logging.INFO
 
-TRAINING_RATIO = 0.75
+
+
 
 logging.basicConfig(filename='../../logs/naive_bayes_v2.log', level=LOGLEVEL_FILE,
                     format='%(asctime)s - %(levelname)-8s - %(name)-12s - %(message)s')
@@ -76,7 +79,7 @@ logging.info("Start time: {0}".format(start_time))
 cl = None           # Our eventual classifier
 if TRAIN or (not TRAIN and not os.path.isfile(CLASSIFIER_NAME)):
     logging.info("Training session in progress. Gathering data.")
-    data = get_training_data(threshold=700)
+    data = get_training_data(threshold=THRESHOLD)
     random.shuffle(data)
     train, test = data[:int(math.floor(len(data)*TRAINING_RATIO))], data[int(math.ceil(len(data)*TRAINING_RATIO)):]
 
