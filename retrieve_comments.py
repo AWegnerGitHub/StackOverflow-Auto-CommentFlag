@@ -128,7 +128,7 @@ def flag_comment(comment_id, classified_as):
             break
 
     if flag_option_id:
-        logging.debug("Issuing %s flag for comment id %s" % (classified_as, comment_id))
+        logging.info("Issuing %s flag for comment id %s" % (classified_as, comment_id))
         try:
             flag = SITE.send_data('comments/%s/flags/add' % (comment_id), option_id=flag_option_id)
             Setting.update_value(s, 'se_api_remaining_quota', flag['quota_remaining'])
