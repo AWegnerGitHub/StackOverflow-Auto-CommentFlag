@@ -168,8 +168,13 @@ def gather_settings():
 
 def get_timestamps():
     now_ts = int((datetime.utcnow() - SETTINGS['EPOCH']).total_seconds())
-    previous_run_ts = int((datetime.strptime(Setting.by_name(s, 'current_status_last_run_datetime'),
+    try:
+        previous_run_ts = int((datetime.strptime(Setting.by_name(s, 'current_status_last_run_datetime'),
                                              "%Y-%m-%d %H:%M:%S.%f") - SETTINGS['EPOCH']).total_seconds())
+    except ValueError:
+        previous_run_ts = int((datetime.strptime(Setting.by_name(s, 'current_status_last_run_datetime'),
+                                             "%Y-%m-%d %H:%M:%S") - SETTINGS['EPOCH']).total_seconds())
+
     return now_ts, previous_run_ts
 
 
