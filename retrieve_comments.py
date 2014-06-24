@@ -71,7 +71,8 @@ def flagging_loop():
                             post_type=utils.post_type_dict[c['post_type']],
                             creation_date=datetime.fromtimestamp(c['creation_date']),
                             comment_type_id=COMMENT_TYPES_DICT[classified_as]['id'],
-                            system_add_date=datetime.utcnow()
+                            system_add_date=datetime.utcnow(),
+                            post_id=c['post_id']
                         ))
                         try:
                             s.commit()

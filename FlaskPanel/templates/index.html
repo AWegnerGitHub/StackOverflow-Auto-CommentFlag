@@ -8,6 +8,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Post ID</th>
                         <th>Post Date</th>
                         <th>Added Date</th>
                         <th>Text</th>
@@ -19,6 +20,7 @@
                   {% for c in comments %}
                     <tr>
                         <td><a href="{{ c.link }}">{{ c.id }}</a></td>
+                        <td>{{ c.post_id }}</td>
                         <td>{{ c.creation_date }}</td>
                         <td>{{ c.system_add_date|friendly_time }}</td>
                         <td>{{ c.text }}</td>

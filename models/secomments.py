@@ -27,6 +27,7 @@ class Comment(Base):
     user_id = Column(BigInteger, nullable=False, index=True)
     reputation = Column(BigInteger, nullable=False)
     post_type = Column(Enum('1', '2'), nullable=False, index=True)
+    post_id = Column(Integer)
     comment_type_id = Column(Integer, ForeignKey('commenttypes.id'), nullable=False, index=True)
     comment_type = relationship('CommentType', backref='comments')
     creation_date = Column(DateTime, nullable=False)

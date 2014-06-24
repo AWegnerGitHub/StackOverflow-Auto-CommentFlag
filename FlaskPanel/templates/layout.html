@@ -20,7 +20,7 @@
             $.fn.editable.defaults.mode = 'inline';
             $('#comment_tbl').dataTable({
                 "aaSorting": [
-                    [ 1, "desc" ]
+                    [ 2, "desc" ]
                 ],
                 "lengthMenu": [
                     [50, 250, 500, 1000],
@@ -52,6 +52,7 @@
                 sPlaceHolder: "head:after",
                 aoColumns: [
                     null,
+                    { type: "text" },
                     null,		// Date filter?
                     null,
 					null,

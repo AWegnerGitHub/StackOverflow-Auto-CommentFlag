@@ -114,10 +114,12 @@ The System has several dynamic settings, available in the "Settings" subheader l
  
 ### Results:
 
-Thus far, the system has maintained a high accuracy rate. The initial training data set was trained with a threshold of 700. As time goes on,
+Thus far, the system has maintained a high accuracy rate. The first week or two had a higher rate of error, but by adjusting the thresholds 
+for when each flag type was to be issued, the accuracy has improved. The initial training data set was trained with a threshold of 700. As time goes on,
 the plan is to retrain the system using the data that it has flagged to build an even more accurate classifier. Using this strategy, though,
 I need to be aware of possible over fitting. 
 
-As it stands, with a required 99% certainty to issue an "Obsolete" or "Too Chatty" flag, the system can flag 100 comments in a matter of 
-hours. A majority of those can be done in the first loop of the day, due to it picking up flags since the last run. 
+As it stands, with a required 99% certainty to issue an "Obsolete" and a 99.9% for "Too Chatty" flag, the system can flag 100 comments in a matter of 
+hours. A majority of those can be done in the first loop of the day, due to it picking up flags since the last run.
+
 
