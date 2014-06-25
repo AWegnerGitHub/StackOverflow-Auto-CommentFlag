@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 import logging
 
-logging = utils.setup_logging("retrieve_comments", file_level=logging.DEBUG, console_level=logging.DEBUG,
+logging = utils.setup_logging("retrieve_comments", file_level=logging.DEBUG, console_level=logging.INFO,
                                 requests_level=logging.CRITICAL)
 s = utils.connect_to_db("sqlite:///FlaskPanel/se_comments.db")
 
