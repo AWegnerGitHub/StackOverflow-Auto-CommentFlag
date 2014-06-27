@@ -303,45 +303,45 @@ def populate_header_counts():
                     .group_by(CommentType.id, CommentType.name)
     )
     resp_dict['comments_manual_add_today'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=0),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=0), hour=0, minute=0, second=0),
         Comment.added_manually == True
         ).count()
     resp_dict['comments_manual_add_yesterday'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=1),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=1), hour=0, minute=0, second=0),
         Comment.added_manually == True
         ).count()
     resp_dict['comments_manual_add_this_week'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=7),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=7), hour=0, minute=0, second=0),
         Comment.added_manually == True
         ).count()
 
     resp_dict['comments_auto_add_today'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=0),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=0), hour=0, minute=0, second=0),
         Comment.added_manually == False
         ).count()
     resp_dict['comments_auto_add_yesterday'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=1),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=1), hour=0, minute=0, second=0),
         Comment.added_manually == False
         ).count()
     resp_dict['comments_auto_add_this_week'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=7),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=7), hour=0, minute=0, second=0),
         Comment.added_manually == False
         ).count()
 
     resp_dict['comments_flag_today'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=0),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=0), hour=0, minute=0, second=0),
         Comment.comment_type_id != 1,
         Comment.is_training == False,
         Comment.added_manually == False
         ).count()
     resp_dict['comments_flag_yesterday'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=1),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=1), hour=0, minute=0, second=0),
         Comment.comment_type_id != 1,
         Comment.is_training == False,
         Comment.added_manually == False
         ).count()
     resp_dict['comments_flag_this_week'] = db.session.query(Comment).filter(
-        Comment.system_add_date >= date.today() - timedelta(days=7),
+        Comment.system_add_date >= datetime.replace(datetime.utcnow() - timedelta(days=7), hour=0, minute=0, second=0),
         Comment.comment_type_id != 1,
         Comment.is_training == False,
         Comment.added_manually == False
