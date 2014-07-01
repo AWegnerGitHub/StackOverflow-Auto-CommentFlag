@@ -25,7 +25,7 @@
                         <td>{{ c.system_add_date|friendly_time }}</td>
                         <td>{{ c.text }}</td>
                         <td><a href="#" class="comment_type" data-pk="{{ c.id }}" data-type="select" data-value="{{ c.comment_type.id }}">{{ c.comment_type.name }}</a></td>
-                        <td>{{ c.disputed }}</td>
+                        <td><a href="#" class="disputed" data-pk="{{ c.id }}" data-type="select" data-value="{{ c.disputed }}">{{ c.disputed }}</a></td>
                     </tr>
                   {% endfor %}
                 </tbody>

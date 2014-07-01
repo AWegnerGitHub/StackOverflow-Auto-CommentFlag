@@ -47,6 +47,22 @@
                         onblur: 'submit',
                         send: 'always'
                     });
+
+                    $('#comment_tbl a.disputed').editable({
+                        type: 'select',
+                        name: 'Comment Disputed',
+                        title: 'Comment Disputed',
+                        url: "{{ url_for('update_dispute') }}",
+                        source: [
+                            {value: 0, text: 'False'},
+                            {value: 1, text: 'True'}
+                        ],
+                        ajaxOptions: {
+                            type: 'post'
+                        },
+                        onblur: 'submit',
+                        send: 'always'
+                    });
                 }
             }).columnFilter({
                 sPlaceHolder: "head:after",
@@ -170,7 +186,7 @@
                 ]
             });
 
-            $('#comment_tbl .editable').on('hidden', function (e, reason) {
+/*            $('#comment_tbl .editable').on('hidden', function (e, reason) {
                 if (reason === 'save' || reason === 'nochange') {
                     var $next = $(this).closest('tr').next().find('.editable');
                     if ($('#autoopen').is(':checked')) {
@@ -182,7 +198,7 @@
                     }
                 }
             });
-
+*/
 
             $(".clickableRow").click(function () {
                 window.document.location = $(this).data('url');

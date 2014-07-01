@@ -294,6 +294,27 @@ def update_comment():
     return jsonify(**response)
 
 
+@app.route('/update_dispute', methods=['POST'])
+def update_dispute():
+    pk = request.form.get('pk', -1, type=int)
+    val = request.form.get('value', -1, type=int)
+
+    response = {
+        'success': False,
+        'msg': 'Unknown Error'
+    }
+
+    if pk < 0 or val < 0:
+        response['msg'] = "Invalid values passed. Attempted to update Comment ID: %s to Disputed Value: %s" % (pk, val)
+    else:
+        db.session.query(Comment).filter_by(id=pk).update(dict(disputed=val))
+        db.session.commit()
+        response['success'] = True
+        response['msg'] = "Updated Comment ID: %s to Disputed Value: %s" % (pk, val)
+
+    return jsonify(**response)
+
+
 # -- Support Functions
 def populate_header_counts():
     resp_dict = {}
