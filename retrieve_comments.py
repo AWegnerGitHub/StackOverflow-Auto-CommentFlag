@@ -27,7 +27,15 @@ CLASSIFIER = None
 def main(skip_comments=False):
     global SETTINGS, SITE, CLASSIFIER_DICT, COMMENT_TYPES_DICT, CLASSIFIER
     SETTINGS = gather_settings()
-    SITE = SEAPI.SEAPI('stackoverflow', key=SETTINGS['API_KEY'], access_token=SETTINGS['API_TOKEN'])
+    try:
+        SITE = SEAPI.SEAPI('stackoverflow', key=SETTINGS['API_KEY'], access_token=SETTINGS['API_TOKEN'])
+    except SEAPI.SEAPIError as e:
+        logging.critical("API Error occurred.")
+        logging.critical("   Error URL: %s" % (e.url))
+        logging.critical("   Error Number: %s" % (e.error))
+        logging.critical("   Error Code: %s" % (e.code))
+        logging.critical("   Error Message: %s" % (e.message))
+        return
     SITE.page_size = SETTINGS['MAX_COMMENTS_RETRIEVE'] if SETTINGS['MAX_COMMENTS_RETRIEVE'] <= 100 else 100
     SITE.max_pages = 1 if floor(SETTINGS['MAX_COMMENTS_RETRIEVE'] / SITE.page_size) == 0 else floor(
         SETTINGS['MAX_COMMENTS_RETRIEVE'] / SITE.page_size)
