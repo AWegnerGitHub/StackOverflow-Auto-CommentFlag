@@ -118,6 +118,7 @@ class SEAPI(object):
             response = requests.get(base_url, params=params, proxies=self.proxy, headers=self._headers)
             self._previous_call = response.url
             try:
+                response.encoding = 'utf-8-sig'
                 response = response.json()
             except ValueError as e:
                 print response.text
