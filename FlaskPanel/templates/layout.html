@@ -253,7 +253,7 @@
 						<div class="col-sm-3">
 							<table class="table table-condensed table-hover">
 								<thead>
-									<tr><th>Comments flagged...</td><th>Count</th></tr>
+									<tr><th>Comments flagged...</th><th>Count</th></tr>
 								</thead>
 								<tbody>
 									<tr class="clickableRow" data-url="{{ url_for('flagged_data', histdays=0) }}"><td>...today</td><td>{{ header_counts.comments_flag_today }}</td></tr>
@@ -265,7 +265,7 @@
 						<div class="col-sm-3">
 							<table class="table table-condensed table-hover">
 								<thead>
-									<tr><th>Comments manually added...</td><th>Count</th></tr>
+									<tr><th>Comments manually added...</th><th>Count</th></tr>
 								</thead>
 								<tbody>
 									<tr class="clickableRow" data-url="{{ url_for('manual_data', histdays=0) }}"><td>...today</td><td>{{ header_counts.comments_manual_add_today }}</td></tr>
@@ -277,7 +277,7 @@
                         <div class="col-sm-3">
 							<table class="table table-condensed table-hover">
 								<thead>
-									<tr><th>Comments system added...</td><th>Count</th></tr>
+									<tr><th>Comments system added...</th><th>Count</th></tr>
 								</thead>
 								<tbody>
 									<tr class="clickableRow" data-url="{{ url_for('automated_data', histdays=0) }}"><td>...today</td><td>{{ header_counts.comments_auto_add_today }}</td></tr>
