@@ -11,10 +11,6 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-
-USER_AGENT = "ANDY COMMENT BOT - v1 - andy@andrewwegner.com"
-FROM = "andy@andrewwegner.com"
-
 class SEAPIError(Exception):
     """Raised if an API Error is encountered."""
 
@@ -43,10 +39,6 @@ class SEAPI(object):
         self._name = None
         self._version = version
         self._previous_call = None
-        self._headers = {
-            'User-Agent': USER_AGENT,
-            'From': FROM
-        }
         if 'proxy' in kwargs:
             self.proxy = kwargs['proxy']
         if 'max_pages' in kwargs:
@@ -115,14 +107,17 @@ class SEAPI(object):
             if ids:
                 base_url += "%s" % (ids)
 
-            response = requests.get(base_url, params=params, proxies=self.proxy, headers=self._headers)
+            try:
+                response = requests.get(base_url, params=params)
+            except requests.exceptions.ConnectionError as e:
+                raise SEAPIError(self._previous_call, str(e), str(e), str(e))
+
             self._previous_call = response.url
             try:
                 response.encoding = 'utf-8-sig'
                 response = response.json()
             except ValueError as e:
-                print response.text
-                raise SEAPIError(self._previous_call, 'No JSON Object', 'No JSON', str(e))
+                raise SEAPIError(self._previous_call, str(e), str(e), str(e))
 
             try:
                 error = response["error_id"]
