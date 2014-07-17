@@ -27,7 +27,46 @@ I have three major goals in the development of this project:
  - Download the repository
  - Run `pip install -r requirements.txt`
  - Run `python -m textblob.download_corpora`
+ - Run `python populate_database.py` for inital table creation (it will be in an SQLite Database)
+ - Launch the web control panel and navigate to the Settings; Fill in the appropriate values for your API information
  - You are now ready to continue
+
+
+### How to run the web control panel:
+
+ - The Flask Control panel can be run from Windows by executing the `run_flask.bat` file. If it is run within Linux, then the 
+ `PYTHONPATH` needs to be modified to include the root of this project and then you can execute `python FlaskPanel\app.py`. 
+ This modification is needed so that modules at a sibling level to `FlaskPanel` can be included.
+ 
+After the above command is executed, you can visit `localhost` and see the panel's main dashboard
+
+![Dashboard Overview](images/dashboard-overview.png)
+
+This gives a very nice overview of the system's current status. From here main of the break downs are selectable and will
+show the comments associated with that data point. For example, by clicking on the "Comments manually added..." -> "...this week"
+data point, you can see the three comments manually added to the system this week. 
+
+![Dashboard Data points](images/dashboard-dataexample.png)
+
+
+### Settings:
+
+The System has several dynamic settings, available in the "Settings" subheader link.
+
+ - `classifier_algorithm` - Setting value that corresponds to which `TrainingAlgorithm` to utilize. This `TrainingAlgorithm` will
+ have a Training File Location that is set to the full path of `CLASSIFIER_NAME` defined in `NaiveBayesV2`
+ - `current_status` - The current status of the flagging application. This should *NOT* be adjusted manually.
+ - `current_status_datetime` - The timestamp of when `current_status` changed. This should *NOT* be adjusted manually. Should be in UTC.
+ - `current_status_last_run_datetime` - The last time the flagging application ran. This should *NOT* be adjusted manually. Should be in UTC.
+ - `flagging_enabled` - True/False value that will determine whether to flag comments on StackOverflow
+ - `flagging_max_comments_retreive` - Maximium number of comments to retrieve per run. Default is 1000 and this equates to 10 pages at 100 comments per page (10 API calls).
+ - `max_history_days` - Number of previous days to include when pulling data from database.
+ - `min_sleep_between_comment_fetch` - Time between comment retrievals. The system may scale this time, but it will never drop below this limit.
+ - `min_sleep_between_flags` - Time between issuing a flag. The system may scale this time, but it will never drop below this limit.
+ - `se_api_comment_filter` - Filter to use when getting comments.
+ - `se_api_key` - StackOverflow API key that is associated with all requests sent.
+ - `se_api_remaining_quota` - Number of calls to the API remaining. If this reaches zero, the system will stop retrieving comments until the next UTC day. This should *NOT* be adjusted manually.
+ - `se_api_token` - StackOverflow access token used when making API calls.
  
  
 ### My Process
@@ -76,41 +115,7 @@ Once you have adjusted the settings in the previous paragraph, run the `algorith
 Be aware that the higher the threshold, the longer training will take. 
 
  
-### How to run the web control panel:
 
- - The Flask Control panel can be run from Windows by executing the `run_flask.bat` file. If it is run within Linux, then the 
- `PYTHONPATH` needs to be modified to include the root of this project and then you can execute `python FlaskPanel\app.py`. 
- This modification is needed so that modules at a sibling level to `FlaskPanel` can be included.
- 
-After the above command is executed, you can visit `localhost` and see the panel's main dashboard
-
-![Dashboard Overview](images/dashboard-overview.png)
-
-This gives a very nice overview of the system's current status. From here main of the break downs are selectable and will
-show the comments associated with that data point. For example, by clicking on the "Comments manually added..." -> "...this week"
-data point, you can see the three comments manually added to the system this week. 
-
-![Dashboard Data points](images/dashboard-dataexample.png)
-
-
-### Settings:
-
-The System has several dynamic settings, available in the "Settings" subheader link.
-
- - `classifier_algorithm` - Setting value that corresponds to which `TrainingAlgorithm` to utilize. This `TrainingAlgorithm` will
- have a Training File Location that is set to the full path of `CLASSIFIER_NAME` defined in `NaiveBayesV2`
- - `current_status` - The current status of the flagging application. This should *NOT* be adjusted manually.
- - `current_status_datetime` - The timestamp of when `current_status` changed. This should *NOT* be adjusted manually. Should be in UTC.
- - `current_status_last_run_datetime` - The last time the flagging application ran. This should *NOT* be adjusted manually. Should be in UTC.
- - `flagging_enabled` - True/False value that will determine whether to flag comments on StackOverflow
- - `flagging_max_comments_retreive` - Maximium number of comments to retrieve per run. Default is 1000 and this equates to 10 pages at 100 comments per page (10 API calls).
- - `max_history_days` - Number of previous days to include when pulling data from database.
- - `min_sleep_between_comment_fetch` - Time between comment retrievals. The system may scale this time, but it will never drop below this limit.
- - `min_sleep_between_flags` - Time between issuing a flag. The system may scale this time, but it will never drop below this limit.
- - `se_api_comment_filter` - Filter to use when getting comments.
- - `se_api_key` - StackOverflow API key that is associated with all requests sent.
- - `se_api_remaining_quota` - Number of calls to the API remaining. If this reaches zero, the system will stop retrieving comments until the next UTC day. This should *NOT* be adjusted manually.
- - `se_api_token` - StackOverflow access token used when making API calls.
  
 ### Results:
 
