@@ -98,3 +98,7 @@ class Setting(Base):
     def update_value(cls, session, name, value):
         session.query(cls).filter_by(name=name).update({"value":value})
         session.commit()
+
+
+def create_all_tables(engine):
+    Base.metadata.create_all(engine)

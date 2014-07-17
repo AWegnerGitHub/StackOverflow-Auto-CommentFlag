@@ -20,7 +20,7 @@ I have three major goals in the development of this project:
  flags.
  - Stack Exchange API; None of the automated flagging would be possible without utilizing the [Stack Exchange API](http://api.stackexchange.com/).
  I will be using a very heavily modified version of [pyso.py](http://stackapps.com/questions/1722/pyso-py-python-stack-overflow-library) and 
- [se-api-py](http://stackapps.com/questions/3881/se-api-py-a-lightwight-python-wrapper-for-se-api) this this API work. 
+ [se-api-py](http://stackapps.com/questions/3881/se-api-py-a-lightwight-python-wrapper-for-se-api) for this API work. 
  
 ### Initial Set up
  
