@@ -167,7 +167,8 @@ def gather_settings():
                 'SLEEP_BETWEEN_FLAGS': float(Setting.by_name(s, 'min_sleep_between_flags')),
                 'EPOCH': datetime.utcfromtimestamp(0),
                 'CLASSIFIER_ALGORITHM': Setting.by_name(s, 'classifier_algorithm'),
-                'MAX_COMMENT_LENGTH': float(Setting.by_name(s, 'flagging_max_comments_length'))
+                'MAX_COMMENT_LENGTH': float(Setting.by_name(s, 'flagging_max_comments_length')),
+                'FLAG_EXCLUSION_TIME': float(Setting.by_name(s, 'flag_exclusion_window')),
                 }
 
     if SITE:
@@ -179,13 +180,13 @@ def gather_settings():
 
 
 def get_timestamps():
-    now_ts = int((datetime.utcnow() - SETTINGS['EPOCH']).total_seconds())
+    now_ts = int((datetime.utcnow() - SETTINGS['EPOCH'] - timedelta(hours=SETTINGS['FLAG_EXCLUSION_TIME'])).total_seconds())
     try:
         previous_run_ts = int((datetime.strptime(Setting.by_name(s, 'current_status_last_run_datetime'),
-                                             "%Y-%m-%d %H:%M:%S.%f") - SETTINGS['EPOCH']).total_seconds())
+                                             "%Y-%m-%d %H:%M:%S.%f") - SETTINGS['EPOCH'] - timedelta(hours=SETTINGS['FLAG_EXCLUSION_TIME'])).total_seconds())
     except ValueError:
         previous_run_ts = int((datetime.strptime(Setting.by_name(s, 'current_status_last_run_datetime'),
-                                             "%Y-%m-%d %H:%M:%S") - SETTINGS['EPOCH']).total_seconds())
+                                             "%Y-%m-%d %H:%M:%S") - SETTINGS['EPOCH'] - timedelta(hours=SETTINGS['FLAG_EXCLUSION_TIME'])).total_seconds())
 
     return now_ts, previous_run_ts
 
