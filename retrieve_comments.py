@@ -2,7 +2,6 @@
 
 from utils import utils
 from models.secomments import Setting, Comment, CommentType, TrainingAlgorithm
-from text.blob import TextBlob
 from SEAPI import SEAPI
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -70,19 +69,25 @@ def flagging_loop():
                         if prob_dist.prob(classified_as) >= COMMENT_TYPES_DICT[classified_as]['flagging_threshold']:
                             logging.debug("Classified: %s => As: %s => Certainty: %s => Flagged: [True]" % (
                                 comment_body, classified_as, prob_dist.prob(classified_as)))
-                            s.add(Comment(
-                                link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
-                                text=comment_body,
-                                id=c['comment_id'],
-                                score=c['score'],
-                                user_id=c['owner']['user_id'],
-                                reputation=c['owner']['reputation'],
-                                post_type=utils.post_type_dict[c['post_type']],
-                                creation_date=datetime.fromtimestamp(c['creation_date']),
-                                comment_type_id=COMMENT_TYPES_DICT[classified_as]['id'],
-                                system_add_date=datetime.utcnow(),
-                                post_id=c['post_id']
-                            ))
+                            try:
+                                s.add(Comment(
+                                    link="http://stackoverflow.com/posts/comments/%s" % (c['comment_id']),
+                                    text=comment_body,
+                                    id=c['comment_id'],
+                                    score=c['score'],
+                                    user_id=c['owner']['user_id'],
+                                    reputation=c['owner']['reputation'],
+                                    post_type=utils.post_type_dict[c['post_type']],
+                                    creation_date=datetime.fromtimestamp(c['creation_date']),
+                                    comment_type_id=COMMENT_TYPES_DICT[classified_as]['id'],
+                                    system_add_date=datetime.utcnow(),
+                                    post_id=c['post_id']
+                                ))
+                            except AttributeError as e:
+                                logging.critical("AttributeError:")
+                                logging.critical("   Comment: http://stackoverflow.com/posts/comments/{}".format(c['comment_id']))
+                                break
+
                             try:
                                 s.commit()
                             except IntegrityError:  # Overlaps in time frames do occur, this prevents it from breaking the commit
