@@ -128,3 +128,28 @@ As it stands, with a required 99% certainty to issue an "Obsolete" and a 99.9% f
 hours. A majority of those can be done in the first loop of the day, due to it picking up flags since the last run.
 
 
+### Updated Results: March 2015
+**Approximately 9 months after implementation**
+
+Roughly 7 months after implementation, information about this system was posted on Meta Stackoverflow. ["Can a machine be taught to flag comments automatically?"][1]
+The response from the community was overwhelmingly positive. It also received some suggested improvements from Moderators (who have to handle the flags
+this generates).
+
+The biggest change that has been made since initial implementation is that it no longer looks at live data. Instead, it looks at data that is 48 hours old. This was done
+both based on feed back from the above question and after being caught up in a mass flag decline after another user performed a large amount of bad flagging by simply running
+a query to find posts. This was documented in the question ["96 wrongly declined comment flags in 1 day"][2]. On this particular day, the system received 46 declined flags.
+
+![Declined Flags](images/chart1.png)
+
+The chart above shows the number of flags declined per day and the rolling 10 day average of the number of declined flags. There are two clear spikes in
+performance. One is at the start of Winter Bash 2014. As mentioned in the link above, I believe this is related to a sharp increase in flags that day as 
+users went after the [Resolution Hat][3]. The second spike is after the mass denial.
+
+It was after this mass denial that the data range for flags was changed. Instead of looking at current comments, it switched to comments that were 48 hours old. This was
+determined based on feedback from Moderators, believing that 48 hours of enough time for users to see comments expressing thanks and confusion (noisy comments). Since that
+time, the number of declined flags has dropped dramatically.
+
+
+ [1]: http://meta.stackoverflow.com/q/280546/189134
+ [2]: http://meta.stackoverflow.com/q/283030/189134
+ [3]: http://winterbash2014.stackexchange.com/resolution
