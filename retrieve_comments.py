@@ -87,6 +87,10 @@ def flagging_loop():
                                 logging.critical("AttributeError:")
                                 logging.critical("   Comment: http://stackoverflow.com/posts/comments/{}".format(c['comment_id']))
                                 break
+                            except KeyError as e:
+                                logging.critical("KeyError:")
+                                logging.critical("   Comment: http://stackoverflow.com/posts/comments/{}".format(c['comment_id']))
+                                break
 
                             try:
                                 s.commit()
